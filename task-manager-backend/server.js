@@ -4,6 +4,7 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User"); // Make sure this path is correct
+const Task = require("./models/Task"); // New Task model file we'll create
 
 const app = express();
 app.use(cors());
@@ -15,31 +16,54 @@ mongoose.connect("mongodb://localhost:27017/taskDB", {
   useUnifiedTopology: true,
 });
 
-const taskSchema = new mongoose.Schema({
-  text: String,
-});
-
-const Task = mongoose.model("Task", taskSchema);
-
 // Secret key for JWT (use an environment variable in production)
 const SECRET_KEY = "your_jwt_secret_key";
 
+// Middleware to authenticate and extract userId from token
+const authenticate = (req, res, next) => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Unauthorized" });
+  
+    try {
+      const decoded = jwt.verify(token, SECRET_KEY);
+      req.userId = decoded.userId;  // Attach userId to request
+      next();
+    } catch (error) {
+      res.status(401).json({ message: "Invalid token" });
+    }
+  };
+  
 // Routes
-app.get("/tasks", async (req, res) => {
-  const tasks = await Task.find();
-  res.json(tasks);
+app.get("/tasks", authenticate, async (req, res) => {
+    try {
+        const tasks = await Task.find({ userId: req.userId });
+        res.json(tasks);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
-app.post("/tasks", async (req, res) => {
-  const newTask = new Task({ text: req.body.text });
-  await newTask.save();
-  res.json(newTask);
+app.post("/tasks", authenticate, async (req, res) => {
+    try {
+        const newTask = new Task({
+          text: req.body.text,
+          userId: req.userId
+        });
+        await newTask.save();
+        res.json(newTask);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
-app.delete("/tasks/:id", async (req, res) => {
-  const taskId = req.params.id;
-  await Task.findByIdAndDelete(taskId);
-  res.json({ message: "Task deleted" });
+app.delete("/tasks/:id", authenticate, async (req, res) => {
+    try {
+        const taskId = req.params.id;
+        await Task.deleteOne({ _id: taskId, userId: req.userId }); // Only delete if it belongs to the user
+        res.json({ message: "Task deleted" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // Signup Route
@@ -92,18 +116,12 @@ app.post("/signin", async (req, res) => {
 });
   
 // Protected Route Example (User Profile)
-app.get("/profile", async (req, res) => {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-  
+app.get("/profile", authenticate, async (req, res) => {
     try {
-      const decoded = jwt.verify(token, SECRET_KEY);
       const user = await User.findById(decoded.userId);
       res.json({ username: user.username });
     } catch (error) {
-      res.status(401).json({ message: "Invalid token" });
+      res.status(500).json({ error: error.message });
     }
 });
   

@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
-function TaskManager() {
+function TaskManager({onLogout}) {
   const [tasks, setTasks] = useState([]);
   const [taskText, setTaskText] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchTasks() {
-      try {
-        const response = await axios.get("http://localhost:5001/tasks");
-        setTasks(response.data);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      }
+        try {
+          const token = localStorage.getItem("token");  // Get the token from localStorage
+          const response = await axios.get("http://localhost:5001/tasks", {
+            headers: { Authorization: `Bearer ${token}` }  // Include token in request headers
+          });
+          setTasks(response.data);
+        } catch (error) {
+          console.error("Error fetching tasks:", error);
+        }
     }
     fetchTasks();
   }, []);
@@ -20,7 +25,10 @@ function TaskManager() {
   const addTask = async () => {
     if (!taskText.trim()) return;
     try {
-      const response = await axios.post("http://localhost:5001/tasks", { text: taskText });
+      const token = localStorage.getItem("token");  // Get the token from localStorage
+      const response = await axios.post("http://localhost:5001/tasks", { text: taskText }, {
+        headers: { Authorization: `Bearer ${token}` }  // Include token in request headers
+      });
       setTasks([...tasks, response.data]);
       setTaskText("");
     } catch (error) {
@@ -30,16 +38,26 @@ function TaskManager() {
 
   const deleteTask = async (taskId) => {
     try {
-      await axios.delete(`http://localhost:5001/tasks/${taskId}`);
+      const token = localStorage.getItem("token");  // Get the token from localStorage
+      await axios.delete(`http://localhost:5001/tasks/${taskId}`, {
+        headers: { Authorization: `Bearer ${token}` }  // Include token in request headers
+      });
       setTasks(tasks.filter(task => task._id !== taskId));
     } catch (error) {
       console.error("Error deleting task:", error);
     }
   };
 
+  // Logout function
+  const handleLogout = () => {
+    onLogout();
+    navigate("/"); // Redirect to the welcome page
+  };
+
   return (
     <div style={{ textAlign: "center", marginTop: "20px" }}>
       <h1>Task Manager</h1>
+      <button onClick={handleLogout} style={{ marginBottom: "20px" }}>Logout</button>
       <input
         type="text"
         value={taskText}

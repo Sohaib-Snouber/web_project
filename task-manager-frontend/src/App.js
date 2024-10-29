@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-d
 import Signup from "./components/Signup";
 import Signin from "./components/Signin";
 import TaskManager from "./components/TaskManager";
+import WelcomePage from "./components/WelcomePage";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
@@ -12,20 +13,26 @@ function App() {
     setIsAuthenticated(true);
   };
 
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("token");
+  };
+
   return (
     <Router>
       <Routes>
         {/* Show Signup/Signin if not authenticated */}
         {!isAuthenticated ? (
           <>
+            <Route path="/" element={<WelcomePage />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/signin" element={<Signin onSignin={handleSignin} />} />
-            <Route path="*" element={<Navigate to="/signin" />} />
+            <Route path="*" element={<Navigate to="/" />} />
           </>
         ) : (
           // Show TaskManager if authenticated
           <>
-            <Route path="/tasks" element={<TaskManager />} />
+            <Route path="/tasks" element={<TaskManager onLogout={handleLogout}/>} />
             <Route path="*" element={<Navigate to="/tasks" />} />
           </>
         )}
