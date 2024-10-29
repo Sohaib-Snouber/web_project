@@ -10,14 +10,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect("mongodb://localhost:27017/taskDB", {
+// Connect to MongoDB "mongodb://localhost:27017/taskDB"
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
 // Secret key for JWT (use an environment variable in production)
-const SECRET_KEY = "your_jwt_secret_key";
+const SECRET_KEY = "sohaibsecret123";
 
 // Middleware to authenticate and extract userId from token
 const authenticate = (req, res, next) => {
