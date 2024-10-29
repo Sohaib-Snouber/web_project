@@ -7,7 +7,7 @@ function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:5001/profile", {
+      const response = await axios.get("https://task-manager-backend-4tll.onrender.com/profile", { //http://localhost:5001/
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsername(response.data.username);

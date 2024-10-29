@@ -11,7 +11,7 @@ function TaskManager({onLogout}) {
     async function fetchTasks() {
         try {
           const token = localStorage.getItem("token");  // Get the token from localStorage
-          const response = await axios.get("http://localhost:5001/tasks", {
+          const response = await axios.get("https://task-manager-backend-4tll.onrender.com/tasks", { // http://localhost:5001/
             headers: { Authorization: `Bearer ${token}` }  // Include token in request headers
           });
           setTasks(response.data);
@@ -26,7 +26,7 @@ function TaskManager({onLogout}) {
     if (!taskText.trim()) return;
     try {
       const token = localStorage.getItem("token");  // Get the token from localStorage
-      const response = await axios.post("http://localhost:5001/tasks", { text: taskText }, {
+      const response = await axios.post("https://task-manager-backend-4tll.onrender.com/tasks", { text: taskText }, { //http://localhost:5001/
         headers: { Authorization: `Bearer ${token}` }  // Include token in request headers
       });
       setTasks([...tasks, response.data]);
@@ -39,7 +39,7 @@ function TaskManager({onLogout}) {
   const deleteTask = async (taskId) => {
     try {
       const token = localStorage.getItem("token");  // Get the token from localStorage
-      await axios.delete(`http://localhost:5001/tasks/${taskId}`, {
+      await axios.delete(`https://task-manager-backend-4tll.onrender.com/tasks/${taskId}`, {  //http://localhost:5001/
         headers: { Authorization: `Bearer ${token}` }  // Include token in request headers
       });
       setTasks(tasks.filter(task => task._id !== taskId));
