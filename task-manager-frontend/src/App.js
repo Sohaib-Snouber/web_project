@@ -1,68 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import Signup from "./components/Signup";
+import Signin from "./components/Signin";
+import TaskManager from "./components/TaskManager";
 
 function App() {
-  const [tasks, setTasks] = useState([]);
-  const [taskText, setTaskText] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
 
-  // Fetch tasks from the server when the component mounts
-  useEffect(() => {
-    async function fetchTasks() {
-      try {
-        const response = await axios.get("http://localhost:5001/tasks");
-        setTasks(response.data);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
-      }
-    }
-    fetchTasks();
-  }, []);
-
-  // Add a new task
-  const addTask = async () => {
-    if (!taskText.trim()) return;
-    try {
-      const response = await axios.post("http://localhost:5001/tasks", { text: taskText });
-      setTasks([...tasks, response.data]);
-      setTaskText("");
-    } catch (error) {
-      console.error("Error adding task:", error);
-    }
-  };
-
-  // Delete a task
-  const deleteTask = async (taskId) => {
-    try {
-      await axios.delete(`http://localhost:5001/tasks/${taskId}`);
-      setTasks(tasks.filter(task => task._id !== taskId));
-    } catch (error) {
-      console.error("Error deleting task:", error);
-    }
+  // Function to set auth status on successful signin
+  const handleSignin = () => {
+    setIsAuthenticated(true);
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "20px" }}>
-      <h1>Task Manager</h1>
-      <input
-        type="text"
-        value={taskText}
-        onChange={(e) => setTaskText(e.target.value)}
-        placeholder="Enter a new task"
-      />
-      <button onClick={addTask}>Add Task</button>
-      <div style={{ marginTop: "20px" }}>
-        {tasks.map(task => (
-          <div key={task._id} style={{ marginBottom: "10px" }}>
-            {task.text}
-            <button onClick={() => deleteTask(task._id)} style={{ marginLeft: "10px" }}>Delete</button>
-          </div>
-        ))}
-      </div>
-    </div>
+    <Router>
+      <Routes>
+        {/* Show Signup/Signin if not authenticated */}
+        {!isAuthenticated ? (
+          <>
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/signin" element={<Signin onSignin={handleSignin} />} />
+            <Route path="*" element={<Navigate to="/signin" />} />
+          </>
+        ) : (
+          // Show TaskManager if authenticated
+          <>
+            <Route path="/tasks" element={<TaskManager />} />
+            <Route path="*" element={<Navigate to="/tasks" />} />
+          </>
+        )}
+      </Routes>
+    </Router>
   );
 }
 
 export default App;
+
+
 // the bellow code was the default code, after creating the frontend package
 
 // import logo from './logo.svg';
