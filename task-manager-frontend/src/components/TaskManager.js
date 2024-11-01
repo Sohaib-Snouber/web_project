@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import config from "../config";
 
 function TaskManager({onLogout}) {
   const [tasks, setTasks] = useState([]);
@@ -11,7 +12,7 @@ function TaskManager({onLogout}) {
     async function fetchTasks() {
         try {
           const token = localStorage.getItem("token");  // Get the token from localStorage
-          const response = await axios.get("https://task-manager-backend-4tll.onrender.com/tasks", { // http://localhost:5001/
+          const response = await axios.get(`${config.baseURL}/tasks`, {
             headers: { Authorization: `Bearer ${token}` }  // Include token in request headers
           });
           setTasks(response.data);
@@ -26,7 +27,7 @@ function TaskManager({onLogout}) {
     if (!taskText.trim()) return;
     try {
       const token = localStorage.getItem("token");  // Get the token from localStorage
-      const response = await axios.post("https://task-manager-backend-4tll.onrender.com/tasks", { text: taskText }, { //http://localhost:5001/
+      const response = await axios.post(`${config.baseURL}/tasks`, { text: taskText }, {
         headers: { Authorization: `Bearer ${token}` }  // Include token in request headers
       });
       setTasks([...tasks, response.data]);
@@ -39,7 +40,7 @@ function TaskManager({onLogout}) {
   const deleteTask = async (taskId) => {
     try {
       const token = localStorage.getItem("token");  // Get the token from localStorage
-      await axios.delete(`https://task-manager-backend-4tll.onrender.com/tasks/${taskId}`, {  //http://localhost:5001/
+      await axios.delete(`${config.baseURL}/tasks/${taskId}`, {
         headers: { Authorization: `Bearer ${token}` }  // Include token in request headers
       });
       setTasks(tasks.filter(task => task._id !== taskId));

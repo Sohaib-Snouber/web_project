@@ -10,8 +10,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Define the switch variable for database choice
+const dbChoice = 1; // Set to 1 for local MongoDB, 2 for cloud MongoDB Atlas
+
+// Use the appropriate MongoDB URI based on dbChoice
+const mongooseUri = dbChoice === 1
+  ? "mongodb://localhost:27017/taskDB" // Local MongoDB URI
+  : process.env.MONGO_URI;             // Cloud MongoDB URI from .env
+
 // Connect to MongoDB "mongodb://localhost:27017/taskDB"
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect(mongooseUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

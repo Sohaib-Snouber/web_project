@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import config from "../config";
 
 function Signup() {
   const [username, setUsername] = useState("");
@@ -9,7 +10,7 @@ function Signup() {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post("https://task-manager-backend-4tll.onrender.com/signup", { //http://localhost:5001/
+      const response = await axios.post(`${config.baseURL}/signup`, {
         username,
         password,
       });

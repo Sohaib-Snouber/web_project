@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import config from "../config";
 
 function Profile() {
   const [username, setUsername] = useState("");
@@ -7,7 +8,7 @@ function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       const token = localStorage.getItem("token");
-      const response = await axios.get("https://task-manager-backend-4tll.onrender.com/profile", { //http://localhost:5001/
+      const response = await axios.get(`${config.baseURL}/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsername(response.data.username);
