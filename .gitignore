@@ -1,0 +1,4 @@
+.DS_Store
+/task-manager-backend/node_modules/
+/task-manager-frontend/node_modules/
+/task-manager-frontend/src/.DS_Store

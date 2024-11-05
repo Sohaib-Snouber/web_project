@@ -1,0 +1,22 @@
+before cloning this repository, you need to install node package
+and other packages listed in the initial commit of this repos in description
+
+after cloning this repo, do the following commands
+
+cd task-manager-backend
+npm -y init
+brew services start mongodb-community@8.0    *(this will only work on mac, beccause the "brew" command is only for mac users)
+node server.js
+
+
+now the backend should work showing
+"Server is running on port 5001"
+
+for the frontend:
+
+cd task-manager-frontend
+npm install
+npm start
+
+now if the frontend works correctly, it should open a web browser for the frontend webpage
+
