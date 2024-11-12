@@ -7,18 +7,27 @@ function TaskManager({onLogout}) {
   const [tasks, setTasks] = useState([]);
   const [taskText, setTaskText] = useState("");
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   //check if the token exists
-  const isTokenExpired = (token) => !token;
+  const isTokenExpired = (token) => {
+    if (!token) return true;
+
+    // Decode the payload part of the token to get the expiration time
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const currentTime = Math.floor(Date.now() / 1000);
+    return currentTime > payload.exp;
+  };
 
   // Check if the token is expired
   useEffect(() => {
-    if (isTokenExpired(token)) {
-      onLogout();
-      navigate("/");
-    }
-  }, [token, onLogout, navigate]);
+    const interval = setInterval(() => {
+      if (isTokenExpired(localStorage.getItem("token"))) {
+        onLogout();
+        navigate("/");
+      }
+    }, 5000); // Check every 5 seconds
+    return () => clearInterval(interval); // Clean up on component unmount
+  }, [onLogout, navigate]);
 
   useEffect(() => {
     async function fetchTasks() {
@@ -37,7 +46,7 @@ function TaskManager({onLogout}) {
         }
     }
     fetchTasks();
-  }, [navigate, onLogout, token]);
+  }, [navigate, onLogout]);
 
   const addTask = async () => {
     if (!taskText.trim()) return;
