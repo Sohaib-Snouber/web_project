@@ -11,17 +11,21 @@ app.use(cors());
 app.use(express.json());
 //
 // Define the switch variable for database choice
-const dbChoice = 1; // Set to 1 for local MongoDB, 2 for cloud MongoDB Atlas
+const dbChoice = 2; // Set to 1 for local MongoDB, 2 for cloud MongoDB Atlas
 
 // Use the appropriate MongoDB URI based on dbChoice
 const mongooseUri = dbChoice === 1
   ? "mongodb://localhost:27017/taskDB" // Local MongoDB URI
-  : process.env.MONGO_URI;             // Cloud MongoDB URI from .env
+  : "mongodb+srv://sohaibshehabsnouber:WebProject2024@webprojectcluster.vno17.mongodb.net/?retryWrites=true&w=majority&appName=WebProjectCluster";             // Cloud MongoDB URI from .env
 
 // Connect to MongoDB "mongodb://localhost:27017/taskDB"
 mongoose.connect(mongooseUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+}).then(() => {
+  console.log("Connected to MongoDB Atlas");
+}).catch(err => {
+  console.error("Error connecting to MongoDB:", err);
 });
 
 // Secret key for JWT (use an environment variable in production)
