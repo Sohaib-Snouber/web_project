@@ -7,6 +7,18 @@ function TaskManager({onLogout}) {
   const [tasks, setTasks] = useState([]);
   const [taskText, setTaskText] = useState("");
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  //check if the token exists
+  const isTokenExpired = (token) => !token;
+
+  // Check if the token is expired
+  useEffect(() => {
+    if (isTokenExpired(token)) {
+      onLogout();
+      navigate("/");
+    }
+  }, [token, onLogout, navigate]);
 
   useEffect(() => {
     async function fetchTasks() {
@@ -17,11 +29,15 @@ function TaskManager({onLogout}) {
           });
           setTasks(response.data);
         } catch (error) {
-          console.error("Error fetching tasks:", error);
+          if (error.response && error.response.status === 401) {
+            // Token has expired or is invalid, log out the user
+            onLogout();
+            navigate("/");
+          }
         }
     }
     fetchTasks();
-  }, []);
+  }, [navigate, onLogout, token]);
 
   const addTask = async () => {
     if (!taskText.trim()) return;
