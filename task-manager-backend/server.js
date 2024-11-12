@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User"); // Make sure this path is correct
 const Task = require("./models/Task"); // New Task model file we'll create
+require('dotenv').config({ path: '../.env' });
 
 const app = express();
 app.use(cors());
@@ -16,7 +17,7 @@ const dbChoice = 2; // Set to 1 for local MongoDB, 2 for cloud MongoDB Atlas
 // Use the appropriate MongoDB URI based on dbChoice
 const mongooseUri = dbChoice === 1
   ? "mongodb://localhost:27017/taskDB" // Local MongoDB URI
-  : "mongodb+srv://sohaibshehabsnouber:WebProject2024@webprojectcluster.vno17.mongodb.net/?retryWrites=true&w=majority&appName=WebProjectCluster";             // Cloud MongoDB URI from .env
+  : process.env.MONGO_URI;             // Cloud MongoDB URI from .env
 
 // Connect to MongoDB "mongodb://localhost:27017/taskDB"
 mongoose.connect(mongooseUri, {
@@ -29,7 +30,7 @@ mongoose.connect(mongooseUri, {
 });
 
 // Secret key for JWT (use an environment variable in production)
-const SECRET_KEY = "sohaibsecret123";
+const SECRET_KEY = process.env.SECRET_KEY; // Access the secret key from the .env file
 
 // Middleware to authenticate and extract userId from token
 const authenticate = (req, res, next) => {
