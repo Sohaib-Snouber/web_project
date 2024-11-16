@@ -14,7 +14,7 @@ function CVBuilder({ onLogout }) {
       const response = await axios.get(`${config.baseURL}/resumes`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setSections(response.data);
+      setSections(response.data.sections);
     }
     fetchResumes();
   }, []);

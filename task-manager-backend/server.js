@@ -147,7 +147,7 @@ app.listen(5001, () => {
 
 app.get("/resumes", authenticate, async (req, res) => {
   try {
-    const resumes = await Resume.find({ userId: req.userId });
+    const resumes = await Resume.findOne({ userId: req.userId });
     res.json(resumes);
   } catch (error) {
     res.status(500).json({ error: error.message });
