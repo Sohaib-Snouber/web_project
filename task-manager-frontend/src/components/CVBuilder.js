@@ -14,7 +14,12 @@ function CVBuilder({ onLogout }) {
       const response = await axios.get(`${config.baseURL}/resumes`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setSections(response.data.sections);
+      // Check if response.data is valid before accessing sections
+      if (response.data && response.data.sections) {
+        setSections(response.data.sections);
+      } else {
+        setSections([]); // Initialize with an empty array if no sections found
+      }    
     }
     fetchResumes();
   }, []);
