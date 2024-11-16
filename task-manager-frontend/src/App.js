@@ -4,6 +4,7 @@ import Signup from "./components/Signup";
 import Signin from "./components/Signin";
 import TaskManager from "./components/TaskManager";
 import WelcomePage from "./components/WelcomePage";
+import CVBuilder from "./components/CVBuilder";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
@@ -32,6 +33,7 @@ function App() {
         ) : (
           // Show TaskManager if authenticated
           <>
+            <Route path="/cv-builder" element={<CVBuilder onLogout={handleLogout} />} />
             <Route path="/tasks" element={<TaskManager onLogout={handleLogout}/>} />
             <Route path="*" element={<Navigate to="/tasks" />} />
           </>

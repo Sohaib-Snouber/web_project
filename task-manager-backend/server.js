@@ -142,3 +142,25 @@ app.listen(5001, () => {
     console.log("Server is running on port 5001");
 });
   
+
+app.get("/resumes", authenticate, async (req, res) => {
+  try {
+    const resumes = await Resume.find({ userId: req.userId });
+    res.json(resumes);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/resumes", authenticate, async (req, res) => {
+  try {
+    const newResume = new Resume({
+      userId: req.userId,
+      sections: req.body.sections,
+    });
+    await newResume.save();
+    res.json(newResume);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
