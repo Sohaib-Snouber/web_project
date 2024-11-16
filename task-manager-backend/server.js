@@ -5,6 +5,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User"); // Make sure this path is correct
 const Task = require("./models/Task"); // New Task model file we'll create
+const Resume = require("./models/Resume");
+
 require('dotenv').config({ path: '../.env' });
 
 const app = express();

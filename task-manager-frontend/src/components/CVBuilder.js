@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import config from '../config';
+import { useNavigate } from "react-router-dom";
 
 function CVBuilder({ onLogout }) {
   const [sections, setSections] = useState([]);
   const [newSection, setNewSection] = useState({ title: "", content: "" });
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchResumes() {
@@ -29,9 +31,16 @@ function CVBuilder({ onLogout }) {
     setNewSection({ title: "", content: "" });
   };
 
+  // Logout function
+  const handleLogout = () => {
+    onLogout();
+    navigate("/"); // Redirect to the welcome page
+  };
+
   return (
     <div>
       <h1>CV Builder</h1>
+      <button onClick={handleLogout} style={{ marginBottom: "20px" }}>Logout</button>
       <input
         type="text"
         placeholder="Section Title"
