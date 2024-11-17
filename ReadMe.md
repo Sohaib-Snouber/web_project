@@ -31,6 +31,7 @@ git clone https://github.com/Sohaib-Snouber/web_project.git
 
 2. Initialize the npm project:
    ```bash
+   npm install
    npm init -y
    ```
 
@@ -38,6 +39,7 @@ git clone https://github.com/Sohaib-Snouber/web_project.git
    ```bash
    brew services start mongodb-community@8.0
    ```
+   **Note**: On other operating systems, you may need a different setup to start MongoDB.
 
 4. Run the backend server:
    ```bash
@@ -67,6 +69,28 @@ git clone https://github.com/Sohaib-Snouber/web_project.git
    ```
 
    If the frontend works correctly, it should automatically open a web browser with the frontend webpage.
+
+
+
+### Database Setup
+
+There are two database options available:
+
+#### a) Local Database
+This was already set up in **Step 3** of the Backend Setup section.
+
+#### b) Cloud Database
+
+1. Create a cloud MongoDB database.
+2. Link the database as shown in [this commit](https://github.com/Sohaib-Snouber/web_project/commit/e9e0a2a0b56cac96e38e67d657a8959a162085ec).
+
+**Note**:  
+Using a cloud database for all developers during the development process is not recommended as it may cause conflicts due to differences in model definitions among developers.  
+To avoid these issues, use the following configuration in [server.js](https://github.com/Sohaib-Snouber/web_project/blob/main/task-manager-backend/server.js) file to switch databases:
+
+```javascript
+const dbChoice = 1; // 1 for local, 2 for cloud
+```
 
 
 
