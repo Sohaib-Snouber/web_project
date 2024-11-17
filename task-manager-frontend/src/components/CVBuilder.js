@@ -46,6 +46,7 @@ function CVBuilder({ onLogout }) {
   return (
     <div>
       <h1>CV Builder: {name}</h1>
+      <button onClick={() => navigate(`/profile`)} style={{ marginBottom: "20px" }}>Back to Profile</button>
       <button onClick={handleLogout} style={{ marginBottom: "20px" }}>Logout</button>
       <input
         type="text"

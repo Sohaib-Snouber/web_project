@@ -71,9 +71,10 @@ function Profile({ onLogout }) {
           resumes.map((resume) => (
             <div key={resume._id} style={{ marginBottom: "10px" }}>
               <button
+                onClick={() => navigate(`/cv-builder/${resume.name}`)} // Navigate to CVBuilder with resume name
                 style={{ marginRight: "10px" }}
               >
-                {`Resume ${resume._id}`}
+                {resume.name}
               </button>
             </div>
           ))
