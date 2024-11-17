@@ -209,3 +209,20 @@ app.put("/resumes/:name", authenticate, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Route to delete a resume by name
+app.delete("/resumes/:name", authenticate, async (req, res) => {
+  try {
+    const deletedResume = await Resume.findOneAndDelete({
+      name: req.params.name,
+      userId: req.userId,
+    });
+    if (!deletedResume) {
+      return res.status(404).json({ message: "Resume not found" });
+    }
+    res.json({ message: "Resume deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+

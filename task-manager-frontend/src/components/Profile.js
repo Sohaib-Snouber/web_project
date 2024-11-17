@@ -52,6 +52,30 @@ function Profile({ onLogout }) {
     }
   };
 
+  // Delete a CV with confirmation prompt
+  const handleDeleteCV = async (resumeName) => {
+    const token = localStorage.getItem("token");
+    // Show confirmation prompt
+    const confirmation = window.prompt(
+      `Enter the name of the CV (${resumeName}) to confirm deletion:`
+    );
+    if (confirmation !== resumeName) {
+      alert("The entered name does not match the CV name.");
+      return;
+    }
+    try {
+      await axios.delete(`${config.baseURL}/resumes/${resumeName}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Refresh the list of resumes after deletion
+      setResumes(resumes.filter((resume) => resume.name !== resumeName));
+      alert("Resume deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting resume:", error);
+      alert("Failed to delete the resume.");
+    }
+  };
+
   return (
     <div style={{ textAlign: "center", marginTop: "20px" }}>
       <h1>Your CVs</h1>
@@ -75,6 +99,12 @@ function Profile({ onLogout }) {
                 style={{ marginRight: "10px" }}
               >
                 {resume.name}
+              </button>
+              <button
+                onClick={() => handleDeleteCV(resume.name)}
+                style={{ marginLeft: "10px", backgroundColor: "red", color: "white" }}
+              >
+                Delete CV
               </button>
             </div>
           ))
