@@ -18,7 +18,7 @@ function Signin({ onSignin }) {
       // Notify App component that sign-in was successful
       onSignin();
       setMessage("Sign in successful!");
-      window.location.href = "/cv-builder"; // Redirect to profile
+      window.location.href = "/profile"; // Redirect to profile
     } catch (error) {
       setMessage(error.response.data.message || "Error signing in");
     }
