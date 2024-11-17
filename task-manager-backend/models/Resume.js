@@ -8,6 +8,7 @@ const sectionSchema = new mongoose.Schema({
 
 const resumeSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  name: { type: String, unique: true, required: true }, // Add unique name for each resume
   sections: [sectionSchema],
 });
 

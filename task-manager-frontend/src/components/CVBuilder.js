@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import config from '../config';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function CVBuilder({ onLogout }) {
   const [sections, setSections] = useState([]);
   const [newSection, setNewSection] = useState({ title: "", content: "" });
   const navigate = useNavigate();
+  const { name } = useParams(); // Get the resume name from the URL
 
   useEffect(() => {
     async function fetchResumes() {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`${config.baseURL}/resumes`, {
+      const response = await axios.get(`${config.baseURL}/resumes/${name}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       // Check if response.data is valid before accessing sections
@@ -22,13 +23,13 @@ function CVBuilder({ onLogout }) {
       }    
     }
     fetchResumes();
-  }, []);
+  }, [name]);
 
   const addSection = async () => {
     if (!newSection.title || !newSection.content) return;
     const token = localStorage.getItem("token");
-    const response = await axios.post(`${config.baseURL}/resumes`, {
-      sections: [...sections, newSection],
+    const response = await axios.put(`${config.baseURL}/resumes/${name}`, {
+      sections: [newSection],
     }, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -44,7 +45,7 @@ function CVBuilder({ onLogout }) {
 
   return (
     <div>
-      <h1>CV Builder</h1>
+      <h1>CV Builder: {name}</h1>
       <button onClick={handleLogout} style={{ marginBottom: "20px" }}>Logout</button>
       <input
         type="text"

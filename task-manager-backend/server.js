@@ -155,14 +155,57 @@ app.get("/resumes", authenticate, async (req, res) => {
 });
 
 app.post("/resumes", authenticate, async (req, res) => {
+  const { name, sections } = req.body;
   try {
+    // Check if a resume with the same name already exists for the user
+    const existingResume = await Resume.findOne({ name, userId: req.userId });
+    if (existingResume) {
+      return res.status(400).json({ message: "Resume with this name already exists." });
+    }
+
     const newResume = new Resume({
       userId: req.userId,
-      sections: req.body.sections,
+      name,
+      sections
     });
     await newResume.save();
-    res.json(newResume);
+    res.status(201).json(newResume);
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Route to get a specific resume by name
+app.get("/resumes/:name", authenticate, async (req, res) => {
+  try {
+    const resume = await Resume.findOne({ name: req.params.name, userId: req.userId });
+    if (!resume) return res.status(404).json({ message: "Resume not found" });
+    res.json(resume);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Route to update an existing resume with new sections
+app.put("/resumes/:name", authenticate, async (req, res) => {
+  const { sections } = req.body;
+
+  try {
+    // Find the resume by name and userId, then update the sections
+    const updatedResume = await Resume.findOneAndUpdate(
+      { name: req.params.name, userId: req.userId },
+      { $push: { sections: { $each: sections } } }, // Add new sections to the existing array
+      { new: true }
+    );
+
+    // If no resume found, return a 404 error
+    if (!updatedResume) {
+      return res.status(404).json({ message: "Resume not found" });
+    }
+
+    res.json(updatedResume);
+  } catch (error) {
+    console.error("Error updating resume:", error);
     res.status(500).json({ error: error.message });
   }
 });

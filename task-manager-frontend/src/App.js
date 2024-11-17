@@ -36,8 +36,9 @@ function App() {
           <>
             <Route path="/profile" element={<Profile onLogout={handleLogout} />} />
             <Route path="/cv-builder" element={<CVBuilder onLogout={handleLogout} />} />
+            <Route path="/cv-builder/:name" element={<CVBuilder onLogout={handleLogout} />} />
             <Route path="/tasks" element={<TaskManager onLogout={handleLogout}/>} />
-            <Route path="*" element={<Navigate to="/tasks" />} />
+            <Route path="*" element={<Navigate to="/profile" />} />
           </>
         )}
       </Routes>
