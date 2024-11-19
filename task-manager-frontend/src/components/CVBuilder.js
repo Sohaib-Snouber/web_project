@@ -8,6 +8,7 @@ function CVBuilder({ onLogout }) {
   const [newSection, setNewSection] = useState({ title: "", content: "" });
   const navigate = useNavigate();
   const { name } = useParams(); // Get the resume name from the URL
+  const [editingIndex, setEditingIndex] = useState(null); // Track the section being edited
 
   useEffect(() => {
     async function fetchResumes() {
@@ -37,6 +38,29 @@ function CVBuilder({ onLogout }) {
     setNewSection({ title: "", content: "" });
   };
 
+  // Save an edited section
+  const saveEditedSection = async (index) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await axios.put(
+        `${config.baseURL}/resumes/${name}`,
+        { sections },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setSections(response.data.sections);
+      setEditingIndex(null); // Exit editing mode
+    } catch (error) {
+      console.error("Error saving edited section:", error);
+    }
+  };
+
+  // Handle input changes in the edit mode
+  const handleEditChange = (index, field, value) => {
+    const updatedSections = [...sections];
+    updatedSections[index][field] = value;
+    setSections(updatedSections);
+  };
+
   // Logout function
   const handleLogout = () => {
     onLogout();
@@ -62,9 +86,27 @@ function CVBuilder({ onLogout }) {
       <button onClick={addSection}>Add Section</button>
       <div>
         {sections.map((section, index) => (
-          <div key={index}>
-            <h3>{section.title}</h3>
-            <p>{section.content}</p>
+          <div key={index} style={{ marginBottom: "20px" }}>
+            {editingIndex === index ? (
+              <div>
+                <input
+                  type="text"
+                  value={section.title}
+                  onChange={(e) => handleEditChange(index, "title", e.target.value)}
+                />
+                <textarea
+                  value={section.content}
+                  onChange={(e) => handleEditChange(index, "content", e.target.value)}
+                ></textarea>
+                <button onClick={() => saveEditedSection(index)}>Save</button>
+              </div>
+            ) : (
+              <div>
+                <h3>{section.title}</h3>
+                <p>{section.content}</p>
+                <button onClick={() => setEditingIndex(index)}>Edit</button>
+              </div>
+            )}
           </div>
         ))}
       </div>
