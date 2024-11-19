@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function Section({ section, index, updateSection, removeSection }) {
+function Section({ section, index, updateSection, removeSection, onDragStart }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedSection, setEditedSection] = useState(section);
 
@@ -10,7 +10,17 @@ function Section({ section, index, updateSection, removeSection }) {
   };
 
   return (
-    <div style={{ border: "1px solid #000", marginBottom: "10px", padding: "10px" }}>
+    <div 
+      style={{ 
+        border: "1px solid #000", 
+        marginBottom: "10px", 
+        padding: "10px", 
+        cursor: "grab",
+      }}
+      draggable // Enables dragging
+      onDragStart={(e) => onDragStart(e, section)} // Pass the dragged section's data
+    >
+
       {isEditing ? (
         <div>
           <input

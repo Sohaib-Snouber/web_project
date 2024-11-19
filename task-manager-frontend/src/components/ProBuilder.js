@@ -3,40 +3,60 @@ import BlocksPanel from "./proBuilderComp/BlocksPanel";
 import CVEditor from "./proBuilderComp/CVEditor";
 
 function ProBuilder({ onLogout }) {
-  const [cvSections, setCvSections] = useState([]); // CV sections added by the user
+  const [sections, setSections] = useState([]); // CV sections added by the user
 
   // Function to handle adding a block from the BlocksPanel
   const addSection = (newSection) => {
-    setCvSections([...cvSections, newSection]); // Add new section to CV
+    setSections([...sections, newSection]); // Add new section to CV
   };
 
   // Function to update a specific section
   const updateSection = (index, updatedSection) => {
-    const updatedSections = [...cvSections];
+    const updatedSections = [...sections];
     updatedSections[index] = updatedSection;
-    setCvSections(updatedSections);
+    setSections(updatedSections);
   };
 
   // Function to remove a specific section
   const removeSection = (index) => {
-    const updatedSections = cvSections.filter((_, i) => i !== index);
-    setCvSections(updatedSections);
+    const updatedSections = sections.filter((_, i) => i !== index);
+    setSections(updatedSections);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const block = JSON.parse(e.dataTransfer.getData("block"));
+    setSections([...sections, block]);
+  };
+  
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDragStart = (e, block) => {
+    e.dataTransfer.setData("block", JSON.stringify(block));
   };
 
   return (
     <div style={{ display: "flex", height: "100vh" }}>
       {/* Left Panel: Blocks */}
       <div style={{ width: "30%", borderRight: "1px solid #ccc", padding: "10px" }}>
-        <BlocksPanel addSection={addSection} />
+        <BlocksPanel 
+          addSection={addSection}
+          onDragStart={handleDragStart}
+        />
       </div>
 
       {/* Right Panel: CV Editor */}
       <div style={{ width: "70%", padding: "10px" }}>
         <CVEditor
-          sections={cvSections}
+          sections={sections}
           updateSection={updateSection}
           removeSection={removeSection}
           onLogout={onLogout}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragStart={handleDragStart}
         />
       </div>
     </div>

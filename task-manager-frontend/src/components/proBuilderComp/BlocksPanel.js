@@ -8,20 +8,21 @@ const predefinedBlocks = [
   { title: "Education", content: "Your education details" },
 ];
 
-function BlocksPanel({ addSection }) {
+function BlocksPanel({ addSection, onDragStart }) {
   return (
     <div>
       <h3>Blocks Panel</h3>
       {predefinedBlocks.map((block, index) => (
         <div
           key={index}
+          draggable // Enable drag-and-drop
+          onDragStart={(e) => onDragStart(e, block)} // Handle drag start
           style={{
             border: "1px solid #000",
             marginBottom: "10px",
             padding: "10px",
-            cursor: "pointer",
+            cursor: "grab",
           }}
-          onClick={() => addSection(block)}
         >
           <h4>{block.title}</h4>
           <p>{block.content}</p>
