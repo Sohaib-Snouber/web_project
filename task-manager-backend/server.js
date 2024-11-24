@@ -7,7 +7,7 @@ const nodemailer = require("nodemailer");
 const User = require("./models/User"); // Make sure this path is correct
 const Task = require("./models/Task"); // New Task model file we'll create
 require('dotenv').config({ path: '../.env' });
-
+ 
 console.log("SECRET_KEY:", process.env.SECRET_KEY);
 console.log("EMAIL_USER:", process.env.EMAIL_USER);
 console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
