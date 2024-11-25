@@ -1,4 +1,5 @@
 require('dotenv').config({ path: '../.env' });
+
 const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
 
 // Create SES client using credentials from .env
@@ -13,7 +14,7 @@ const client = new SESClient({
 const params = {
   Source: process.env.SES_SOURCE_EMAIL, // Get source email from .env
   Destination: {
-    ToAddresses: "sohaibshehabsnouber@gmail.com", // destination email
+    ToAddresses: ['sohaibshehabsnouber@gmail.com'], // destination email
   },
   Message: {
     Subject: { Data: "Test Email from Amazon SES" },
