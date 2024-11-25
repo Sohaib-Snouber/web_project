@@ -1,23 +1,30 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import WelcomePage from "./components/WelcomePage";
 import Signup from "./components/Signup";
 import Signin from "./components/Signin";
 import TaskManager from "./components/TaskManager";
 import WelcomePage from "./components/WelcomePage";
 import CVBuilder from "./components/CVBuilder";
 import Profile from "./components/Profile";
+import Verify from "./components/verify";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
+  const [isVerified, setIsVerified] = useState(false);
 
-  // Function to set auth status on successful signin
   const handleSignin = () => {
     setIsAuthenticated(true);
+    // Fetch user verification status from the server or local storage
+    const userVerified = localStorage.getItem("isVerified") === "true";
+    setIsVerified(userVerified);
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    setIsVerified(false);
     localStorage.removeItem("token");
+    localStorage.removeItem("isVerified");
   };
 
   return (
@@ -47,32 +54,3 @@ function App() {
 }
 
 export default App;
-
-
-// the bellow code was the default code, after creating the frontend package
-
-// import logo from './logo.svg';
-// import './App.css';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
-// export default App;

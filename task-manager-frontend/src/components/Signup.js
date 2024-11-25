@@ -2,16 +2,18 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import config from "../config";
+import Verify from "./verify";
 
 function Signup() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
 
   const handleSignup = async () => {
     try {
       const response = await axios.post(`${config.baseURL}/signup`, {
-        username,
+        email,
         password,
       });
       setMessage(response.data.message);
@@ -20,14 +22,18 @@ function Signup() {
     }
   };
 
+  const handleVerified = () => {
+    setIsVerified(true);
+  };
+
   return (
     <div>
       <h2>Signup</h2>
       <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
       />
       <input
         type="password"
@@ -37,7 +43,10 @@ function Signup() {
       />
       <button onClick={handleSignup}>Sign Up</button>
       <p>{message}</p>
-      {/* Link to Signup page */}
+      {message.includes("Check your email for the verification code") && (
+        <Verify email={email} onVerified={handleVerified} />
+      )}
+      {isVerified && <p>Email verified successfully. You can now sign in.</p>}
       <p>
         Already have an account? <Link to="/signin">Sign in here</Link>
       </p>
