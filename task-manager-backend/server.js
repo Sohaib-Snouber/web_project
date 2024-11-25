@@ -138,6 +138,11 @@ app.post("/signup", async (req, res) => {
     .then((data) => console.log("Email sent successfully:", data))
     .catch((error) => console.error("Error sending email:", error));
     
+    const command2 = new SendEmailCommand(params);
+    client.send(command2)
+    .then((data) => console.log("Email sent successfully:", data))
+    .catch((error) => console.error("Error sending email:", error));
+
     res.status(201).json({
       message: "User created successfully. Check your email for the verification code.",
     });

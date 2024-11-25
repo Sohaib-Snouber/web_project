@@ -4,14 +4,14 @@ import axios from "axios";
 import config from "../config";
 
 function Signin({ onSignin }) {
-  const [username, setUsername] = useState("");
+  const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
   const handleSignin = async () => {
     try {
       const response = await axios.post(`${config.baseURL}/signin`, {
-        username,
+        email,
         password,
       });
       localStorage.setItem("token", response.data.token);
@@ -29,9 +29,9 @@ function Signin({ onSignin }) {
       <h2>Sign In</h2>
       <input
         type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        placeholder="email"
+        value={email}
+        onChange={(e) => setemail(e.target.value)}
       />
       <input
         type="password"

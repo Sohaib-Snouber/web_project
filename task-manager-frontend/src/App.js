@@ -4,7 +4,6 @@ import WelcomePage from "./components/WelcomePage";
 import Signup from "./components/Signup";
 import Signin from "./components/Signin";
 import TaskManager from "./components/TaskManager";
-import WelcomePage from "./components/WelcomePage";
 import CVBuilder from "./components/CVBuilder";
 import Profile from "./components/Profile";
 import Verify from "./components/verify";
