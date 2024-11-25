@@ -3,15 +3,12 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
 const User = require("./models/User"); // Make sure this path is correct
 const Task = require("./models/Task"); // New Task model file we'll create
+const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
+
 require('dotenv').config({ path: '../.env' });
  
-console.log("SECRET_KEY:", process.env.SECRET_KEY);
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
-
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -37,6 +34,14 @@ mongoose.connect(mongooseUri, {
 // Secret key for JWT (use an environment variable in production)
 const SECRET_KEY = process.env.SECRET_KEY; // Access the secret key from the .env file
 
+// Create SES client using credentials from .env
+const client = new SESClient({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
+  },
+});
 // Middleware to authenticate and extract userId from token
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -111,29 +116,29 @@ app.post("/signup", async (req, res) => {
     });
     await newUser.save();
 
-    // Send authentication code via email
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-    
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Email Verification Code",
-      text: `Your verification code is ${authCode}. It will expire in 30 minutes.`
+    // Sending email with AWS SES
+    const params = {
+      Source: process.env.SES_SOURCE_EMAIL, // Your verified SES email
+      Destination: {
+        ToAddresses: [email],
+      },
+      Message: {
+        Subject: { Data: "Email Verification Code" },
+        Body: {
+          Text: {
+            Data: `Your verification code is ${authCode}. It will expire in 30 minutes.`,
+          },
+        },
+      },
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error("Error sending email:", error); // Log the error
-        return res.status(500).json({ message: "Error sending email" });
-      }
-      console.log("Email sent:", info.response); // Log the response
-      res.status(201).json({ message: "User created successfully. Check your email for the verification code." });
+    const command = new SendEmailCommand(params);
+    client.send(command)
+    .then((data) => console.log("Email sent successfully:", data))
+    .catch((error) => console.error("Error sending email:", error));
+    
+    res.status(201).json({
+      message: "User created successfully. Check your email for the verification code.",
     });
   } catch (error) {
     console.error("Error during signup:", error); // Log the error
