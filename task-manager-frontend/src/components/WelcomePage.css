@@ -1,0 +1,94 @@
+/* General reset */
+body {
+  margin: 0;
+  font-family: "Arial", sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+.main-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 50px;
+  min-height: 100vh;
+}
+
+.left-part {
+  width: 50%;
+  padding: 20px;
+}
+
+.left-part h3 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.left-part h3 span {
+  color: var(--color-soft); /* Highlighted text */
+  font-weight: bold;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  color: #fff;
+  background-color: var(--color-soft);
+  border-radius: 5px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+  background-color: #0056b3;
+}
+
+.right-part {
+  width: 45%;
+}
+
+.home-image {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Add some animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.main-section {
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .main-section {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .left-part,
+  .right-part {
+    width: 100%;
+  }
+
+  .left-part h3 {
+    font-size: 2rem;
+  }
+
+  .cta-button {
+    margin-top: 10px;
+  }
+
+  .home-image {
+    margin-top: 20px;
+  }
+}

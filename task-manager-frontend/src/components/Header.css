@@ -1,0 +1,105 @@
+.header-container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  padding: 8px 15px;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--primary-color);
+  color: var(--color-bg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header-logo {
+  grid-area: logo;
+  display: flex;
+  width: 200px;
+  align-items: center;
+  height: 50px;
+  justify-content: center;
+}
+
+.header-logo a {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.header-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+  width: auto;
+}
+
+/* -------------------------- Links Styles -------------------------- */
+.links {
+  display: flex;
+  gap: 1.5em;
+  align-items: center;
+}
+
+.links a {
+  color: var(--text-light);
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 5px 10px;
+  transition: background-color 0.3s, color 0.3s;
+  border-radius: 5px;
+}
+
+.links a:hover {
+  background-color: var(--color-bg);
+  color: var(--primary-color);
+}
+
+/* -------------------- Buttons and Logout Styles -------------------- */
+.header-btn {
+  background-color: var(--color-soft);
+  color: var(--primary-color);
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header-btn:hover {
+  background-color: var(--link-hover);
+  color: var(--color-bg);
+}
+
+.btns .header-btn {
+  background-color: var(--color-bg);
+  color: var(--primary-color);
+}
+
+.btns .header-btn:hover {
+  background-color: var(--color-soft);
+  color: var(--primary-color);
+}
+
+/* ------------------ Responsive Design ------------------ */
+@media (max-width: 768px) {
+  .links {
+    gap: 1em;
+  }
+
+  .header-container {
+    flex-wrap: wrap;
+    padding: 10px;
+  }
+
+  .header-logo {
+    width: 150px;
+    justify-content: flex-start;
+  }
+
+  .header-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+}
