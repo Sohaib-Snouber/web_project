@@ -9,7 +9,7 @@ const Resume = require("./models/Resume");
 const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
 
 require('dotenv').config({ path: '../.env' });
- 
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -24,8 +24,7 @@ const mongooseUri = dbChoice === 1
 
 // Connect to MongoDB "mongodb://localhost:27017/taskDB"
 mongoose.connect(mongooseUri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+
 }).then(() => {
   console.log("Connected to MongoDB Atlas");
 }).catch(err => {
@@ -135,13 +134,13 @@ app.post("/signup", async (req, res) => {
 
     const command = new SendEmailCommand(params);
     client.send(command)
-    .then((data) => console.log("Email sent successfully:", data))
-    .catch((error) => console.error("Error sending email:", error));
-    
+      .then((data) => console.log("Email sent successfully:", data))
+      .catch((error) => console.error("Error sending email:", error));
+
     const command2 = new SendEmailCommand(params);
     client.send(command2)
-    .then((data) => console.log("Email sent successfully:", data))
-    .catch((error) => console.error("Error sending email:", error));
+      .then((data) => console.log("Email sent successfully:", data))
+      .catch((error) => console.error("Error sending email:", error));
 
     res.status(201).json({
       message: "User created successfully. Check your email for the verification code.",
@@ -200,6 +199,7 @@ app.post("/signin", async (req, res) => {
     const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: "1h" });
     res.json({ token, message: "Sign in successful" });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 });
@@ -217,7 +217,7 @@ app.get("/profile", authenticate, async (req, res) => {
 
 app.listen(5001, () => {
   console.log("Server is running on port 5001");
-});  
+});
 
 app.get("/resumes", authenticate, async (req, res) => {
   try {
