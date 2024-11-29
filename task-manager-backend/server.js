@@ -9,7 +9,7 @@ const Resume = require("./models/Resume");
 const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
 
 require('dotenv').config({ path: '../.env' });
- 
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -20,12 +20,11 @@ const dbChoice = 2; // Set to 1 for local MongoDB, 2 for cloud MongoDB Atlas
 // Use the appropriate MongoDB URI based on dbChoice
 const mongooseUri = dbChoice === 1
   ? "mongodb://localhost:27017/taskDB" // Local MongoDB URI
-  : process.env.MONGO_URI;             // Cloud MongoDB URI from .env
+  : "mongodb+srv://mohamedd:MrHjI4BiVFCVHoOY@cluster0.krgi7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";             // Cloud MongoDB URI from .env
 
 // Connect to MongoDB "mongodb://localhost:27017/taskDB"
 mongoose.connect(mongooseUri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+
 }).then(() => {
   console.log("Connected to MongoDB Atlas");
 }).catch(err => {
@@ -33,16 +32,16 @@ mongoose.connect(mongooseUri, {
 });
 
 // Secret key for JWT (use an environment variable in production)
-const SECRET_KEY = process.env.SECRET_KEY; // Access the secret key from the .env file
+// const SECRET_KEY = process.env.SECRET_KEY; // Access the secret key from the .env file
 
-// Create SES client using credentials from .env
-const client = new SESClient({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_KEY,
-  },
-});
+// // Create SES client using credentials from .env
+// const client = new SESClient({
+//   region: process.env.AWS_REGION,
+//   credentials: {
+//     accessKeyId: process.env.AWS_ACCESS_KEY,
+//     secretAccessKey: process.env.AWS_SECRET_KEY,
+//   },
+// });
 // Middleware to authenticate and extract userId from token
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -118,30 +117,30 @@ app.post("/signup", async (req, res) => {
     await newUser.save();
 
     // Sending email with AWS SES
-    const params = {
-      Source: process.env.SES_SOURCE_EMAIL, // Your verified SES email
-      Destination: {
-        ToAddresses: [email],
-      },
-      Message: {
-        Subject: { Data: "Email Verification Code" },
-        Body: {
-          Text: {
-            Data: `Your verification code is ${authCode}. It will expire in 30 minutes.`,
-          },
-        },
-      },
-    };
+    //const params = {
+    //   Source: process.env.SES_SOURCE_EMAIL, // Your verified SES email
+    //   Destination: {
+    //     ToAddresses: [email],
+    //   },
+    //   Message: {
+    //     Subject: { Data: "Email Verification Code" },
+    //     Body: {
+    //       Text: {
+    //         Data: `Your verification code is ${authCode}. It will expire in 30 minutes.`,
+    //       },
+    //     },
+    //   },
+    // };
 
-    const command = new SendEmailCommand(params);
-    client.send(command)
-    .then((data) => console.log("Email sent successfully:", data))
-    .catch((error) => console.error("Error sending email:", error));
-    
-    const command2 = new SendEmailCommand(params);
-    client.send(command2)
-    .then((data) => console.log("Email sent successfully:", data))
-    .catch((error) => console.error("Error sending email:", error));
+    // const command = new SendEmailCommand(params);
+    // client.send(command)
+    //   .then((data) => console.log("Email sent successfully:", data))
+    //   .catch((error) => console.error("Error sending email:", error));
+
+    // const command2 = new SendEmailCommand(params);
+    // client.send(command2)
+    //   .then((data) => console.log("Email sent successfully:", data))
+    //   .catch((error) => console.error("Error sending email:", error));
 
     res.status(201).json({
       message: "User created successfully. Check your email for the verification code.",
@@ -184,6 +183,9 @@ app.post("/signin", async (req, res) => {
   try {
     const { email, password } = req.body;
 
+
+
+
     // Find the user
     const user = await User.findOne({ email });
     if (!user) {
@@ -196,10 +198,12 @@ app.post("/signin", async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+
     // Generate a JWT
-    const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user._id }, "SECRET_KEY", { expiresIn: "1h" });
     res.json({ token, message: "Sign in successful" });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 });
@@ -217,7 +221,7 @@ app.get("/profile", authenticate, async (req, res) => {
 
 app.listen(5001, () => {
   console.log("Server is running on port 5001");
-});  
+});
 
 app.get("/resumes", authenticate, async (req, res) => {
   try {
