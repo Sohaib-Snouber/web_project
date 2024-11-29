@@ -13,7 +13,7 @@ function Signin({ onSignin }) {
     try {
       e.preventDefault()
 
-      const response = await axios.post(`http://localhost:5001/signin`, {
+      const response = await axios.post(`${config.baseURL}/signin`, {
         email,
         password,
       });
@@ -54,7 +54,7 @@ function Signin({ onSignin }) {
             <label htmlFor="email">Email</label>
             <input
               type="text"
-              placeholder="name@CV.com"
+              placeholder="name@gmail.com"
               onChange={(e) => setemail(e.target.value)}
             />
           </div>
