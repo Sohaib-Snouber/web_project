@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import config from "../config";
 import { useNavigate } from "react-router-dom";
+import Header from "./Header";
 
 function Profile({ onLogout }) {
   const [resumes, setResumes] = useState([]);
@@ -10,11 +11,15 @@ function Profile({ onLogout }) {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(`${config.baseURL}/resumes`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setResumes(response.data);
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${config.baseURL}/resumes`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setResumes(response.data);
+      } catch (err) {
+        console.log(err);
+      }
     };
 
     fetchProfile();
@@ -77,6 +82,8 @@ function Profile({ onLogout }) {
   };
 
   return (
+    <>
+    <Header />
     <div style={{ textAlign: "center", marginTop: "20px" }}>
       <h1>Your CVs</h1>
       {/* Form to create a new CV */}
@@ -87,7 +94,7 @@ function Profile({ onLogout }) {
           value={newResumeName}
           onChange={(e) => setNewResumeName(e.target.value)}
           style={{ marginRight: "10px" }}
-        />
+          />
         <button onClick={handleCreateNewCV}>Create New CV</button>
       </div>
       <div>
@@ -97,13 +104,13 @@ function Profile({ onLogout }) {
               <button
                 onClick={() => navigate(`/cv-builder/${resume.name}`)} // Navigate to CVBuilder with resume name
                 style={{ marginRight: "10px" }}
-              >
+                >
                 {resume.name}
               </button>
               <button
                 onClick={() => handleDeleteCV(resume.name)}
                 style={{ marginLeft: "10px", backgroundColor: "red", color: "white" }}
-              >
+                >
                 Delete CV
               </button>
             </div>
@@ -117,6 +124,7 @@ function Profile({ onLogout }) {
         Logout
       </button>
     </div>
+        </>
   );
 }
 
