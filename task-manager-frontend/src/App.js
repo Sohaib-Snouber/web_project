@@ -6,6 +6,7 @@ import TaskManager from "./components/TaskManager";
 import WelcomePage from "./components/WelcomePage";
 import CVBuilder from "./components/CVBuilder";
 import Profile from "./components/Profile";
+import FormsPanel from "./components/FormsPanel";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
@@ -38,6 +39,7 @@ function App() {
             <Route path="/cv-builder" element={<CVBuilder onLogout={handleLogout} />} />
             <Route path="/cv-builder/:name" element={<CVBuilder onLogout={handleLogout} />} />
             <Route path="/tasks" element={<TaskManager onLogout={handleLogout}/>} />
+            <Route path="/forms" element={<FormsPanel />} />
             <Route path="*" element={<Navigate to="/profile" />} />
           </>
         )}
