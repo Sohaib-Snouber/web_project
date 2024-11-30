@@ -44,7 +44,7 @@ function Profile({ onLogout }) {
       // Send a request to create a new resume
       await axios.post(
         `${config.baseURL}/resumes`,
-        { name: newResumeName, sections: [] },
+        { name: newResumeName },
         {
           headers: { Authorization: `Bearer ${token}` },
         }

@@ -9,7 +9,8 @@ const sectionSchema = new mongoose.Schema({
 const resumeSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   name: { type: String, unique: true, required: true }, // Add unique name for each resume
-  sections: [sectionSchema],
+  format: { type: String, required: false }, // Store the selected format name
+  sections: { type: [sectionSchema], required: false }, // Correct placement of required
 });
 
 module.exports = mongoose.model('Resume', resumeSchema);

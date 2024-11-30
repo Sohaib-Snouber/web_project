@@ -12,27 +12,45 @@ function CVBuilder({ onLogout }) {
   const [selectedFormat, setSelectedFormat] = useState(null); // Track selected format
 
   useEffect(() => {
-    // Fetch from backend if no format is selected
-    if (!selectedFormat) {
-      async function fetchResumes() {
-        const token = localStorage.getItem("token");
+    // Fetch the existing resume details
+    async function fetchResume() {
+      const token = localStorage.getItem("token");
+      try {
         const response = await axios.get(`${config.baseURL}/resumes/${name}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        // Check if response.data is valid before accessing sections
-        if (response.data && response.data.sections) {
-          setSections(response.data.sections);
-        } else {
-          setSections([]); // Initialize with an empty array if no sections found
-        }    
-      }
-      fetchResumes();
-    }
-  }, [name, selectedFormat]);
 
-  const handleFormatSelection = (format) => {
+        const { sections, format } = response.data;
+        setSections(sections || []);
+        if (format) {
+          // If a format is already set, select it
+          const existingFormat = CVFormats.find((f) => f.name === format);
+          if (existingFormat) setSelectedFormat(existingFormat);
+        }
+      } catch (error) {
+        console.error("Error fetching resume:", error);
+        alert("Failed to fetch resume details.");
+      }
+    }
+
+    fetchResume();
+  }, [name]);
+
+  const handleFormatSelection = async (format) => {
     setSelectedFormat(format);
     setSections(format.sections);
+    // Save the format to the backend
+    const token = localStorage.getItem("token");
+    try {
+      await axios.put(
+        `${config.baseURL}/resumes/${name}`,
+        { sections: format.sections, format: format.name }, // Include format name
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (error) {
+      console.error("Error saving format:", error);
+      alert("Failed to save selected format.");
+    }
   };
 
   // Save updated sections to the backend

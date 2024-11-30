@@ -27,7 +27,7 @@ function Header() {
                     Logout
                 </button> :
                     <div className="btns">
-                        <button className="btn header-btn" onClick={() => navigate("/signin")}>Login</button>
+                        <button className="btn header-btn" onClick={() => navigate("/signin")}>Login /Register</button>
                     </div>
                 }            </div>
         </header>

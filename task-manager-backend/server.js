@@ -229,7 +229,7 @@ app.get("/resumes", authenticate, async (req, res) => {
 });
 
 app.post("/resumes", authenticate, async (req, res) => {
-  const { name, sections } = req.body;
+  const { name } = req.body;
   try {
     // Check if a resume with the same name already exists for the user
     const existingResume = await Resume.findOne({ name, userId: req.userId });
@@ -239,8 +239,7 @@ app.post("/resumes", authenticate, async (req, res) => {
 
     const newResume = new Resume({
       userId: req.userId,
-      name,
-      sections
+      name
     });
     await newResume.save();
     res.status(201).json(newResume);
@@ -268,7 +267,7 @@ app.put("/resumes/:name", authenticate, async (req, res) => {
     // Find the resume by name and userId, then update the sections
     const updatedResume = await Resume.findOneAndUpdate(
       { name: req.params.name, userId: req.userId },
-      { $push: { sections: { $each: sections } } }, // Add new sections to the existing array
+      { sections: req.body.sections, format: req.body.format }, // Add new sections to the existing array
       { new: true }
     );
 
