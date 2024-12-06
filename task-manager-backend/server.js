@@ -152,6 +152,111 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+// Resend Email Route
+app.post("/resendemail", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Find the user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email" });
+    }
+
+    // Generate a new authentication code
+    const authCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const authCodeExpires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
+
+    // Update the user with the new authentication code
+    user.authCode = authCode;
+    user.authCodeExpires = authCodeExpires;
+    await user.save();
+
+    // Sending email with AWS SES
+    const params = {
+      Source: process.env.SES_SOURCE_EMAIL, // Your verified SES email
+      Destination: {
+        ToAddresses: [email],
+      },
+      Message: {
+        Subject: { Data: "Email Verification Code" },
+        Body: {
+          Text: {
+            Data: `Your verification code is ${authCode}. It will expire in 30 minutes.`,
+          },
+        },
+      },
+    };
+
+    const command = new SendEmailCommand(params);
+    client.send(command)
+      .then((data) => console.log("Email sent successfully:", data))
+      .catch((error) => console.error("Error sending email:", error));
+
+    res.json({ message: "Verification email resent successfully." });
+  } catch (error) {
+    console.error("Error resending email:", error); // Log the error
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// forgotpassword Route
+const crypto = require("crypto"); // To generate secure random tokens
+
+app.post("/forgotpassword", async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User with this email does not exist." });
+    }
+
+    // Generate a reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenExpires = Date.now() + 15 * 60 * 1000; // Token valid for 15 minutes
+
+    user.resetToken = resetToken;
+    user.resetTokenExpires = resetTokenExpires;
+    await user.save();
+
+    // Send reset link via email
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    await sendVerificationEmail(email, `Click the link to reset your password: ${resetLink}`);
+
+    res.json({ message: "Password reset link has been sent to your email." });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// reset password submission
+app.post("/reset-password/:token", async (req, res) => {
+  const { token } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpires: { $gt: Date.now() }, // Ensure token is still valid
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token." });
+    }
+
+    // Hash and update the password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.resetToken = undefined;
+    user.resetTokenExpires = undefined;
+    await user.save();
+
+    res.json({ message: "Password has been reset successfully." });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
 // Verify Route
