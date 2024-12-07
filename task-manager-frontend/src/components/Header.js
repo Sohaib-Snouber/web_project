@@ -19,7 +19,7 @@ function Header() {
                 </a>
             </div>
             <div className="links">
-                <Link to={"/"}>Home</Link>
+                <Link to={"/profile"}>Home</Link>
                 <Link to={"/my-cvs"}>My Cvs</Link>
             </div>
             <div>
