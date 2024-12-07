@@ -224,12 +224,13 @@ app.get("/resumes", authenticate, async (req, res) => {
     const resumes = await Resume.find({ userId: req.userId });
     res.json(resumes);
   } catch (error) {
+    console.error("Error fetching resumes:", error);
     res.status(500).json({ error: error.message });
   }
 });
 
 app.post("/resumes", authenticate, async (req, res) => {
-  const { name } = req.body;
+  const { name, format, content } = req.body;
   try {
     // Check if a resume with the same name already exists for the user
     const existingResume = await Resume.findOne({ name, userId: req.userId });
@@ -238,12 +239,15 @@ app.post("/resumes", authenticate, async (req, res) => {
     }
 
     const newResume = new Resume({
-      userId: req.userId,
-      name
+      userId: req.userId, // Use userId from middleware
+      name,
+      format,
+      content
     });
     await newResume.save();
     res.status(201).json(newResume);
   } catch (error) {
+    console.error("Error saving resume:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -261,13 +265,13 @@ app.get("/resumes/:name", authenticate, async (req, res) => {
 
 // Route to update an existing resume with new sections
 app.put("/resumes/:name", authenticate, async (req, res) => {
-  const { sections } = req.body;
+  const { format, content } = req.body;
 
   try {
     // Find the resume by name and userId, then update the sections
     const updatedResume = await Resume.findOneAndUpdate(
-      { name: req.params.name, userId: req.userId },
-      { sections: req.body.sections, format: req.body.format }, // Add new sections to the existing array
+      { userId: req.userId, name: req.params.name }, // Match by userId and name
+      { format, content },
       { new: true }
     );
 
