@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import config from '../config';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import config from "../config";
 import { useNavigate, useParams } from "react-router-dom";
-import Form from "./Form";
+import Template1 from "./Template1";
+import Template2 from "./Template2";
 import CVFormats from "./CVFormats";
+import SampleData1 from "./SampleData1"; // Data for Template 1
+import SampleData2 from "./SampleData2"; // Data for Template 2
 
 function CVBuilder({ onLogout }) {
   const [sections, setSections] = useState([]);
+  const [selectedFormat, setSelectedFormat] = useState(null); // Selected template format
   const navigate = useNavigate();
-  const { name } = useParams(); // Get the resume name from the URL
-  const [selectedFormat, setSelectedFormat] = useState(null); // Track selected format
+  const { name } = useParams(); // Resume name from the URL
 
   useEffect(() => {
-    // Fetch the existing resume details
+    // Fetch existing resume details
     async function fetchResume() {
       const token = localStorage.getItem("token");
       try {
@@ -22,8 +25,8 @@ function CVBuilder({ onLogout }) {
 
         const { sections, format } = response.data;
         setSections(sections || []);
+
         if (format) {
-          // If a format is already set, select it
           const existingFormat = CVFormats.find((f) => f.name === format);
           if (existingFormat) setSelectedFormat(existingFormat);
         }
@@ -39,12 +42,13 @@ function CVBuilder({ onLogout }) {
   const handleFormatSelection = async (format) => {
     setSelectedFormat(format);
     setSections(format.sections);
-    // Save the format to the backend
+
+    // Save selected format and sections to the backend
     const token = localStorage.getItem("token");
     try {
       await axios.put(
         `${config.baseURL}/resumes/${name}`,
-        { sections: format.sections, format: format.name }, // Include format name
+        { sections: format.sections, format: format.name },
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (error) {
@@ -53,7 +57,6 @@ function CVBuilder({ onLogout }) {
     }
   };
 
-  // Save updated sections to the backend
   const saveSections = async (updatedSections) => {
     const token = localStorage.getItem("token");
     try {
@@ -62,12 +65,12 @@ function CVBuilder({ onLogout }) {
         { sections: updatedSections },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setSections(response.data.sections); // Update sections in the UI
+      setSections(response.data.sections); // Update UI
     } catch (error) {
       console.error("Error saving sections:", error);
     }
   };
-  // Logout function
+
   const handleLogout = () => {
     onLogout();
     navigate("/"); // Redirect to the welcome page
@@ -76,10 +79,14 @@ function CVBuilder({ onLogout }) {
   return (
     <div>
       <h1>CV Builder: {name}</h1>
-      <button onClick={() => navigate(`/profile`)} style={{ marginBottom: "20px" }}>Back to Profile</button>
-      <button onClick={handleLogout} style={{ marginBottom: "20px" }}>Logout</button>
+      <button onClick={() => navigate(`/profile`)} style={{ marginBottom: "20px" }}>
+        Back to Profile
+      </button>
+      <button onClick={handleLogout} style={{ marginBottom: "20px" }}>
+        Logout
+      </button>
 
-      {/* If no format is selected, show format selection */}
+      {/* Display Template Selection */}
       {!selectedFormat ? (
         <div>
           <h2>Select a Format</h2>
@@ -104,9 +111,12 @@ function CVBuilder({ onLogout }) {
             ))}
           </div>
         </div>
+      ) : selectedFormat.name === "Template 2" ? (
+        // Render Template 2 with its data
+        <Template2 data={SampleData2} />
       ) : (
-        // Show form once a format is selected
-        <Form sections={sections} onUpdateSection={saveSections} />
+        // Render Template 1 with its data
+        <Template1 content={SampleData1} />
       )}
     </div>
   );
