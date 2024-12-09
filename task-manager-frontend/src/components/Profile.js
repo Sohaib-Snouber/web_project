@@ -5,10 +5,11 @@ import config from "../config";
 import Header from "./Header";
 import Template1 from "./Template1";
 import "./Profile.css"; // Import the CSS file
+import Template2 from "./Template2";
 
 const templates = [
   { id: 1, name: "Template 1", image: "/images/templates/template1.png", component: Template1 },
-  { id: 2, name: "Template 2", image: "/images/template2.png" },
+  { id: 2, name: "Template 2", image: "/images/template2.png", component: Template2 },
 ];
 
 function Profile({ onLogout }) {
@@ -95,8 +96,8 @@ function Profile({ onLogout }) {
                 value={newResumeName}
                 onChange={(e) => setNewResumeName(e.target.value)}
               />
-              {resumeContent && (
-                <Template1
+              {resumeContent && selectedTemplate?.component && (
+                <selectedTemplate.component
                   onSave={handleSaveResume}
                 />
               )}
