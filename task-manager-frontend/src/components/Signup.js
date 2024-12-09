@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import config from "../config";
-import Verify from "./verify";
+import Verify from "./Verify";
 import "./Signup.css";
 
 function Signup() {
@@ -11,7 +11,8 @@ function Signup() {
   const [message, setMessage] = useState("");
   const [isVerified, setIsVerified] = useState(false);
 
-  const handleSignup = async () => {
+  const handleSignup = async (e) => {
+    e.preventDefault(); // Prevent page reload
     try {
       const response = await axios.post(`${config.baseURL}/signup`, {
         email,
@@ -60,7 +61,7 @@ function Signup() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button onClick={handleSignup} className="btn btn-primary Register-btn">Sign Up</button>
+          <button onClick={(e) => handleSignup(e)} className="btn btn-primary Register-btn">Sign Up</button>
           <p>{message}</p>
           {message.includes("Check your email for the verification code") && (
             <Verify email={email} onVerified={handleVerified} />

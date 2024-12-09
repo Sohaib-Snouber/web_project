@@ -6,8 +6,9 @@ function Verify({ email, onVerified }) {
   const [authCode, setAuthCode] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleVerify = async () => {
+  const handleVerify = async (e) => {
     try {
+      e.preventDefault()
       const response = await axios.post(`${config.baseURL}/verify`, {
         email,
         authCode,
@@ -30,7 +31,7 @@ function Verify({ email, onVerified }) {
         value={authCode}
         onChange={(e) => setAuthCode(e.target.value)}
       />
-      <button onClick={handleVerify}>Verify Email</button>
+      <button onClick={(e) => handleVerify(e)}>Verify Email</button>
       <p>{message}</p>
     </div>
   );
