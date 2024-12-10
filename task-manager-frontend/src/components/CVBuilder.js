@@ -5,75 +5,84 @@ import { useNavigate, useParams } from "react-router-dom";
 import Template1 from "./Template1";
 import Template2 from "./Template2";
 import CVFormats from "./CVFormats";
-import SampleData1 from "./SampleData1"; // Data for Template 1
-import SampleData2 from "./SampleData2"; // Data for Template 2
+import SampleData1 from "./SampleData1"; // Import Template1 Sample Data
+import SampleData2 from "./SampleData2"; // Import Template2 Sample Data
 
 function CVBuilder({ onLogout }) {
   const [sections, setSections] = useState([]);
-  const [selectedFormat, setSelectedFormat] = useState(null); // Selected template format
+  const [resumeContent, setResumeContent] = useState(null);
+  const [selectedFormat, setSelectedFormat] = useState(null);
   const navigate = useNavigate();
-  const { name } = useParams(); // Resume name from the URL
+  const { name } = useParams();
 
   useEffect(() => {
-    // Fetch existing resume details
-    async function fetchResume() {
+    const fetchResume = async () => {
       const token = localStorage.getItem("token");
       try {
         const response = await axios.get(`${config.baseURL}/resumes/${name}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const { sections, format } = response.data;
-        setSections(sections || []);
+        const { content, format } = response.data;
 
-        if (format) {
-          const existingFormat = CVFormats.find((f) => f.name === format);
-          if (existingFormat) setSelectedFormat(existingFormat);
+        if (content) {
+          // Ensure all required fields exist in resumeContent
+          const defaultData = format === "Template 1" ? SampleData1 : SampleData2;
+          const mergedContent = { ...defaultData, ...content };
+          setResumeContent(mergedContent);
+        } else {
+          const defaultData = format === "Template 1" ? SampleData1 : SampleData2;
+          setResumeContent(defaultData);
         }
+
+        const selected = CVFormats.find((f) => f.name === format);
+        setSelectedFormat(selected);
       } catch (error) {
         console.error("Error fetching resume:", error);
         alert("Failed to fetch resume details.");
       }
-    }
+    };
 
     fetchResume();
   }, [name]);
 
   const handleFormatSelection = async (format) => {
     setSelectedFormat(format);
-    setSections(format.sections);
+    const sampleData = format.name === "Template 1" ? SampleData1 : SampleData2;
+    setResumeContent(sampleData);
 
-    // Save selected format and sections to the backend
     const token = localStorage.getItem("token");
     try {
       await axios.put(
         `${config.baseURL}/resumes/${name}`,
-        { sections: format.sections, format: format.name },
+        { format: format.name, content: sampleData },
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (error) {
       console.error("Error saving format:", error);
-      alert("Failed to save selected format.");
+      alert("Failed to save the selected format.");
     }
   };
 
-  const saveSections = async (updatedSections) => {
+  const saveSections = async (updatedContent) => {
     const token = localStorage.getItem("token");
     try {
       const response = await axios.put(
         `${config.baseURL}/resumes/${name}`,
-        { sections: updatedSections },
+        { content: updatedContent, format: selectedFormat.name },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setSections(response.data.sections); // Update UI
+      setResumeContent(response.data.content);
+      alert("Resume saved successfully!");
     } catch (error) {
-      console.error("Error saving sections:", error);
+      console.error("Error saving resume content:", error);
+      alert("Failed to save resume content.");
     }
   };
 
   const handleLogout = () => {
     onLogout();
-    navigate("/"); // Redirect to the welcome page
+    navigate("/");
   };
 
   return (
@@ -86,7 +95,6 @@ function CVBuilder({ onLogout }) {
         Logout
       </button>
 
-      {/* Display Template Selection */}
       {!selectedFormat ? (
         <div>
           <h2>Select a Format</h2>
@@ -111,12 +119,12 @@ function CVBuilder({ onLogout }) {
             ))}
           </div>
         </div>
+      ) : selectedFormat.name === "Template 1" ? (
+        <Template1 content={resumeContent} onSave={saveSections} />
       ) : selectedFormat.name === "Template 2" ? (
-        // Render Template 2 with its data
-        <Template2 data={SampleData2} />
+        <Template2 content={resumeContent} onSave={saveSections} />
       ) : (
-        // Render Template 1 with its data
-        <Template1 content={SampleData1} />
+        <h2>Unsupported Template</h2>
       )}
     </div>
   );

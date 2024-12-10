@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import axios from "axios";
 import config from "../config";
-//import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Template1 from "./Template1";
-import "./Profile.css"; // Import the CSS file
+import Template2 from "./Template2"; // Import Template 2
+import "./Profile.css";
 
 const templates = [
   { id: 1, name: "Template 1", image: "/images/templates/template1.png", component: Template1 },
-  { id: 2, name: "Template 2", image: "/images/template2.png" },
+  { id: 2, name: "Template 2", image: "/images/templates/template2.png", component: Template2 },
 ];
 
 function Profile({ onLogout }) {
   const [newResumeName, setNewResumeName] = useState("");
-  const [resumeContent, setResumeContent] = useState(null)
+  const [resumeContent, setResumeContent] = useState(null);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   const handleTemplateClick = (template) => {
@@ -41,7 +41,8 @@ function Profile({ onLogout }) {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.post(`${config.baseURL}/resumes`,
+      await axios.post(
+        `${config.baseURL}/resumes`,
         {
           name: newResumeName,
           format: selectedTemplate.name,
@@ -49,14 +50,14 @@ function Profile({ onLogout }) {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Correct placement for Authorization header
+            Authorization: `Bearer ${token}`,
           },
         }
       );
       alert("Resume saved successfully!");
     } catch (error) {
       console.error("Error saving resume:", error);
-      console.error("Error saving resume:", error);
+      alert("Failed to save resume. Please try again.");
     }
   };
 
@@ -64,7 +65,6 @@ function Profile({ onLogout }) {
     <>
       <Header />
       <div className="profile-container">
-        {/* Template Side Panel */}
         <div className="template-panel">
           <h3>Templates</h3>
           <div className="template-grid">
@@ -82,11 +82,9 @@ function Profile({ onLogout }) {
             ))}
           </div>
         </div>
-
-        {/* Resume Editor */}
         <div className="resume-panel">
           {!selectedTemplate ? (
-            <h1> Select a template to create your CV</h1>
+            <h1>Select a template to create your CV</h1>
           ) : (
             <>
               <input
@@ -96,7 +94,8 @@ function Profile({ onLogout }) {
                 onChange={(e) => setNewResumeName(e.target.value)}
               />
               {resumeContent && (
-                <Template1
+                <selectedTemplate.component
+                  content={resumeContent}
                   onSave={handleSaveResume}
                 />
               )}
