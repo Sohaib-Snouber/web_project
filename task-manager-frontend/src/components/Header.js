@@ -19,7 +19,7 @@ function Header() {
                 </a>
             </div>
             <div className="links">
-                <Link to={"/"}>Home</Link>
+                <Link to={"/profile"}>Home</Link>
                 <Link to={"/my-cvs"}>My Cvs</Link>
             </div>
             <div>
@@ -27,7 +27,7 @@ function Header() {
                     Logout
                 </button> :
                     <div className="btns">
-                        <button className="btn header-btn" onClick={() => navigate("/signin")}>Login</button>
+                        <button className="btn header-btn" onClick={() => navigate("/signin")}>Login /Register</button>
                     </div>
                 }            </div>
         </header>

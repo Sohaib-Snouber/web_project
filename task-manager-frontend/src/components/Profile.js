@@ -1,130 +1,109 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import config from "../config";
-import { useNavigate } from "react-router-dom";
 import Header from "./Header";
+import Template1 from "./Template1";
+import Template2 from "./Template2"; // Import Template 2
+import "./Profile.css";
+
+const templates = [
+  { id: 1, name: "Template 1", image: "/images/templates/template1.png", component: Template1 },
+  { id: 2, name: "Template 2", image: "/images/templates/template2.png", component: Template2 },
+];
 
 function Profile({ onLogout }) {
-  const [resumes, setResumes] = useState([]);
   const [newResumeName, setNewResumeName] = useState("");
-  const navigate = useNavigate();
+  const [resumeContent, setResumeContent] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`${config.baseURL}/resumes`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setResumes(response.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
-  // Logout function
-  const handleLogout = () => {
-    onLogout();
-    navigate("/"); // Redirect to the welcome page
+  const handleTemplateClick = (template) => {
+    setSelectedTemplate(template);
+    setNewResumeName("");
+    setResumeContent({
+      header: "Untitled Resume",
+      picture: { src: "", alt: "Profile Picture" },
+      contact: [],
+      skills: [],
+      softwareSkills: [],
+      languages: [],
+      summary: "",
+      education: [],
+      projects: [],
+      workExperience: [],
+    });
   };
 
-  // Create a new CV
-  const handleCreateNewCV = async () => {
+  const handleSaveResume = async (updatedResumeContent) => {
     if (!newResumeName.trim()) {
-      alert("Please enter a valid name for your CV");
+      alert("Please provide a name for the resume.");
       return;
     }
 
-    const token = localStorage.getItem("token");
-
     try {
-      // Send a request to create a new resume
+      const token = localStorage.getItem("token");
       await axios.post(
         `${config.baseURL}/resumes`,
-        { name: newResumeName, sections: [] },
         {
-          headers: { Authorization: `Bearer ${token}` },
+          name: newResumeName,
+          format: selectedTemplate.name,
+          content: updatedResumeContent,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-
-      // Navigate to the newly created resume's builder page
-      navigate(`/cv-builder/${newResumeName}`);
+      alert("Resume saved successfully!");
     } catch (error) {
-      console.error("Error creating new resume:", error);
-    }
-  };
-
-  // Delete a CV with confirmation prompt
-  const handleDeleteCV = async (resumeName) => {
-    const token = localStorage.getItem("token");
-    // Show confirmation prompt
-    const confirmation = window.prompt(
-      `Enter the name of the CV (${resumeName}) to confirm deletion:`
-    );
-    if (confirmation !== resumeName) {
-      alert("The entered name does not match the CV name.");
-      return;
-    }
-    try {
-      await axios.delete(`${config.baseURL}/resumes/${resumeName}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      // Refresh the list of resumes after deletion
-      setResumes(resumes.filter((resume) => resume.name !== resumeName));
-      alert("Resume deleted successfully.");
-    } catch (error) {
-      console.error("Error deleting resume:", error);
-      alert("Failed to delete the resume.");
+      console.error("Error saving resume:", error);
+      alert("Failed to save resume. Please try again.");
     }
   };
 
   return (
     <>
-    <Header />
-    <div style={{ textAlign: "center", marginTop: "20px" }}>
-      <h1>Your CVs</h1>
-      {/* Form to create a new CV */}
-      <div style={{ marginBottom: "20px" }}>
-        <input
-          type="text"
-          placeholder="Enter CV Name"
-          value={newResumeName}
-          onChange={(e) => setNewResumeName(e.target.value)}
-          style={{ marginRight: "10px" }}
-          />
-        <button onClick={handleCreateNewCV}>Create New CV</button>
+      <Header />
+      <div className="profile-container">
+        <div className="template-panel">
+          <h3>Templates</h3>
+          <div className="template-grid">
+            {templates.map((template) => (
+              <div
+                key={template.id}
+                className={`template-card ${
+                  selectedTemplate?.id === template.id ? "selected" : ""
+                }`}
+                onClick={() => handleTemplateClick(template)}
+              >
+                <img src={template.image} alt={template.name} />
+                <p>{template.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="resume-panel">
+          {!selectedTemplate ? (
+            <h1>Select a template to create your CV</h1>
+          ) : (
+            <>
+              <input
+                type="text"
+                placeholder="Resume Name"
+                value={newResumeName}
+                onChange={(e) => setNewResumeName(e.target.value)}
+              />
+              {resumeContent && (
+                <selectedTemplate.component
+                  content={resumeContent}
+                  onSave={handleSaveResume}
+                />
+              )}
+            </>
+          )}
+        </div>
       </div>
-      <div>
-        {resumes.length > 0 ? (
-          resumes.map((resume) => (
-            <div key={resume._id} style={{ marginBottom: "10px" }}>
-              <button
-                onClick={() => navigate(`/cv-builder/${resume.name}`)} // Navigate to CVBuilder with resume name
-                style={{ marginRight: "10px" }}
-                >
-                {resume.name}
-              </button>
-              <button
-                onClick={() => handleDeleteCV(resume.name)}
-                style={{ marginLeft: "10px", backgroundColor: "red", color: "white" }}
-                >
-                Delete CV
-              </button>
-            </div>
-          ))
-        ) : (
-          <p>You have no resumes yet.</p>
-        )}
-      </div>
-
-      <button onClick={() => handleLogout()} style={{ marginTop: "20px" }}>
-        Logout
-      </button>
-    </div>
-        </>
+    </>
   );
 }
 
