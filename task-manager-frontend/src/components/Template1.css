@@ -1,11 +1,24 @@
-/*  general styling */
+/* General Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
 
+.template-page{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 h2 {
     font-size: 24px;
-    color: #fff;
+    color: #444;
     border-bottom: 2px solid #444;
     padding-bottom: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    font-weight: bold;
 }
 
 ul {
@@ -17,138 +30,180 @@ ul li {
     margin-bottom: 8px;
 }
 
-
 /* Container Layout */
 .container {
     display: flex;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 20px auto;
     background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 /* Sidebar Styles */
 .sidebar {
+    z-index: 10000;
     width: 30%;
     background-color: #2d2d2d;
     color: #fff;
-    padding: 20px;
-    z-index: 2; /* Place it above the top bar and main content */
+    padding: 30px 20px;
+    box-sizing: border-box;
+}
 
+.sidebar h2 {
+    color: #fff;
+}
+
+.sidebar p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 10px;
 }
 
 /* Top Bar */
 .top-bar {
     position: absolute;
-    top: 100px; /* Make sure it starts at the top */
+    top: 150px;
     left: 0;
-    width: 100%;
-    height: 150px; /* Increase the height to make the bar thicker */
+    width: 90%;
+    overflow: hidden;
+    padding-right: 43px;
+    height: 55px;
     background-color: #444;
-    z-index: 1; /* Place it above the main content but below the sidebar */
-    padding: 0 20px; /* Optional: add horizontal padding if needed */
+    padding: 20px;
+    padding-right: 50px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    justify-content: flex-end;
 }
 
-/* Header Inside Top Bar */
 .top-bar header {
-    color: #fff;
-    position: absolute;
-    left: 30%; /* Adjust to match the width of the sidebar */
-    width: 70%; /* Width of the main content */
-    text-align: center; /* Center the text within the main content area */
-    top: 50%;
-    transform: translateY(-50%); /* Center the text vertically */
+    font-size: 32px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 /* Picture Section */
 .picture {
+    display: flex;
     text-align: center;
     margin-bottom: 20px;
+    flex-direction: column;
+    align-items: center;
 }
+
 .picture img {
-    width: 250px; /* Increase the width to make the image bigger */
-    height: auto; /* Maintain the aspect ratio */
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 4px solid #444;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-bottom: 20px;
-
+    margin-bottom: 15px;
 }
 
-
+/* Profile Info */
 .profile p {
     display: flex;
     align-items: center;
-
+    font-size: 16px;
 }
 
 .profile .icon {
-    font-size: 24px; /* Increase the size of the icon */
-    margin-right: 8px; /* Space between the icon and the text */
+    font-size: 20px;
+    margin-right: 8px;
 }
 
-.sidebar p {
-    font-size: 18px;
-}
-
-
+/* Skills & Software */
 .skills p, .software p {
     margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
 }
-
-
-.software p {
-    margin: 0;
-}
-
-.software .rating {
-    margin-top: 5px; /* Add space between the skill and the stars */
-    color: #f39c12; /* Optional: color the stars, can be any color */
-}
-
-
-
 
 .rating {
-    margin-top: 5px; /* Space between the skill/software and the stars */
-    color: #f39c12; /* Optional: star color */
+    color: #f39c12;
+    margin-top: 5px;
 }
 
 /* Languages Section */
 .languages li {
-    display: flex; /* Align stars and text in a row */
+    display: flex;
     align-items: center;
     margin-bottom: 10px;
 }
 
 .languages .rating {
-    margin-left: 10px; /* Space between the stars and language */
-    margin-top: 0; /* Reset top margin to align stars in one line */
-    transform: translateY(10px); /* Lower the stars slightly */
+    margin-left: 10px;
 }
 
 /* Main Content Styles */
 .main-content {
     width: 70%;
     padding: 40px;
-    z-index: 0; /* Base layer */
-    margin-top: 300px; /* based on the height of the top bar */
-
+    margin-top: 100px;
+    box-sizing: border-box;
 }
-/* Main Content Styling */
+
 .main-content h2 {
-    color: #444; 
+    color: #444;
 }
 
 .main-content p {
     font-size: 18px;
+    line-height: 1.6;
 }
 
+/* Input Fields Styling */
+input[type="text"],
+input[type="email"],
+textarea {
+    width: 96%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: #007BFF;
+    background-color: #fff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+}
+
+/* Buttons */
+button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 9px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
 
 /* Hyperlinks */
 a {
-    color: #fff;
+    color: #007BFF;
     text-decoration: none;
 }
 
 a:hover {
     text-decoration: underline;
 }
-
