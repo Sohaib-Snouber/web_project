@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 //import "./Template1.css"; // Assuming the provided CSS is used
 import SampleData1 from "./SampleData1";
+import "./Template1.css"
 
 const Template1 = ({ onSave, content }) => {
   const [resume, setResume] = useState(content || SampleData1);
@@ -47,8 +48,7 @@ const Template1 = ({ onSave, content }) => {
   };
 
   return (
-    <div className="container">
-      {/* Top Bar */}
+    <div className="template-page">
       <div className="top-bar">
         <header>
           <input
@@ -59,6 +59,10 @@ const Template1 = ({ onSave, content }) => {
           />
         </header>
       </div>
+
+    <div className="container">
+      {/* Top Bar */}
+      
 
       {/* Sidebar */}
       <div className="sidebar">
@@ -97,16 +101,16 @@ const Template1 = ({ onSave, content }) => {
                   handleSectionChange("contact", index, "value", e.target.value)
                 }
                 placeholder="Enter contact info"
-              />
+                />
               {item.link && (
                 <input
-                  type="text"
+                type="text"
                   value={item.link}
                   onChange={(e) =>
                     handleSectionChange("contact", index, "link", e.target.value)
                   }
                   placeholder="Enter link"
-                />
+                  />
               )}
               <button onClick={() => handleRemoveItem("contact", index)}>-</button>
             </div>
@@ -115,7 +119,7 @@ const Template1 = ({ onSave, content }) => {
             onClick={() =>
               handleAddItem("contact", { icon: "📞", value: "", link: "" })
             }
-          >
+            >
             + Add Contact
           </button>
         </section>
@@ -130,11 +134,11 @@ const Template1 = ({ onSave, content }) => {
                 value={skill.name}
                 onChange={(e) => handleSectionChange("skills", index, "name", e.target.value)}
                 placeholder="Enter skill name"
-              />
+                />
               <select
                 value={skill.rating}
                 onChange={(e) => handleSectionChange("skills", index, "rating", e.target.value)}
-              >
+                >
                 {[1, 2, 3, 4, 5].map((star) => (
                   <option key={star} value={star}>
                     {star}
@@ -161,13 +165,13 @@ const Template1 = ({ onSave, content }) => {
                   handleSectionChange("softwareSkills", index, "name", e.target.value)
                 }
                 placeholder="Enter software skill"
-              />
+                />
               <select
                 value={skill.rating}
                 onChange={(e) =>
                   handleSectionChange("softwareSkills", index, "rating", e.target.value)
                 }
-              >
+                >
                 {[1, 2, 3, 4, 5].map((star) => (
                   <option key={star} value={star}>
                     {star}
@@ -194,13 +198,13 @@ const Template1 = ({ onSave, content }) => {
                   handleSectionChange("languages", index, "name", e.target.value)
                 }
                 placeholder="Enter language"
-              />
+                />
               <select
                 value={language.rating}
                 onChange={(e) =>
                   handleSectionChange("languages", index, "rating", e.target.value)
                 }
-              >
+                >
                 {[1, 2, 3, 4, 5].map((star) => (
                   <option key={star} value={star}>
                     {star}
@@ -228,7 +232,7 @@ const Template1 = ({ onSave, content }) => {
             value={resume.summary}
             onChange={(e) => handleFieldChange("summary", e.target.value)}
             placeholder="Write your summary..."
-          />
+            />
         </section>
 
         <section className="education">
@@ -242,7 +246,7 @@ const Template1 = ({ onSave, content }) => {
                   handleSectionChange("education", index, "degree", e.target.value)
                 }
                 placeholder="Enter degree"
-              />
+                />
               <input
                 type="text"
                 value={edu.institution}
@@ -250,7 +254,7 @@ const Template1 = ({ onSave, content }) => {
                   handleSectionChange("education", index, "institution", e.target.value)
                 }
                 placeholder="Enter institution"
-              />
+                />
               <button onClick={() => handleRemoveItem("education", index)}>-</button>
             </div>
           ))}
@@ -281,7 +285,7 @@ const Template1 = ({ onSave, content }) => {
                   handleSectionChange("projects", index, "description", e.target.value)
                 }
                 placeholder="Enter project description"
-              />
+                />
               <button onClick={() => handleRemoveItem("projects", index)}>-</button>
             </div>
           ))}
@@ -291,7 +295,6 @@ const Template1 = ({ onSave, content }) => {
         </section>
       </div>
 
-      <button className= "save button" onClick={() => onSave(resume)}>Save Resume</button>
     <br></br>
     <br></br>
     <br></br>
@@ -302,6 +305,9 @@ const Template1 = ({ onSave, content }) => {
     <br></br>
 
     </div>
+    <button className= "save button" onClick={() => onSave(resume)}>Save Resume</button>
+
+                </div>
   );
 };
 
