@@ -56,39 +56,6 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// Routes
-app.get("/tasks", authenticate, async (req, res) => {
-  try {
-    const tasks = await Task.find({ userId: req.userId });
-    res.json(tasks);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.post("/tasks", authenticate, async (req, res) => {
-  try {
-    const newTask = new Task({
-      text: req.body.text,
-      userId: req.userId
-    });
-    await newTask.save();
-    res.json(newTask);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.delete("/tasks/:id", authenticate, async (req, res) => {
-  try {
-    const taskId = req.params.id;
-    await Task.deleteOne({ _id: taskId, userId: req.userId }); // Only delete if it belongs to the user
-    res.json({ message: "Task deleted" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Signup Route
 app.post("/signup", async (req, res) => {
   try {
