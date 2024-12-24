@@ -5,6 +5,7 @@ import "./Template1.css"
 
 const Template1 = ({ onSave, content }) => {
   const [resume, setResume] = useState(content || SampleData1);
+  const [newItemType, setNewItemType] = useState({ section: "contact", type: "Phone" }); // Default section and type
 
   useEffect(() => {
     if (content) {
@@ -25,7 +26,93 @@ const Template1 = ({ onSave, content }) => {
     });
   };
 
-  const handleAddItem = (section, newItem) => {
+  const handleAddItem = (section) => {
+    let newItem = {};
+
+    // Define default structures for each section
+    switch (section) {
+      case "contact":
+        newItem = {
+          icon: "",
+          value: "",
+          link: "",
+        };
+        switch (newItemType.type) {
+          case "Email":
+            newItem.icon = "✉️";
+            newItem.link = "mailto:";
+            break;
+          case "Website":
+            newItem.icon = "🔗";
+            newItem.link = "http://";
+            break;
+          case "Phone":
+            newItem.icon = "📞";
+            newItem.link = "tel:";
+            break;
+          case "Address":
+            newItem.icon = "📍";
+            newItem.value = "City, Street, Country";
+            break;
+          default:
+            break;
+        }
+        break;
+
+      case "skills":
+        newItem = {
+          name: "New Skill",
+          rating: 1,
+        };
+        break;
+
+      case "softwareSkills":
+        newItem = {
+          name: "New Software",
+          rating: 1,
+        };
+        break;
+
+      case "languages":
+        newItem = {
+          name: "New Language",
+          rating: 1,
+        };
+        break;
+
+      case "education":
+        newItem = {
+          degree: "New Degree",
+          institution: "New Institution",
+          startDate: "",
+          endDate: "",
+          description: "",
+        };
+        break;
+
+      case "workExperience":
+        newItem = {
+          title: "New Job Title",
+          company: "New Company",
+          description: "",
+          startDate: "",
+          endDate: "",
+        };
+        break;
+
+      case "projects":
+        newItem = {
+          title: "New Project Title",
+          description: "New Project Description",
+          startDate: "",
+          endDate: "",
+        };
+        break;
+
+      default:
+        break;
+    }
+
     setResume((prev) => ({
       ...prev,
       [section]: [...prev[section], newItem],
@@ -115,13 +202,20 @@ const Template1 = ({ onSave, content }) => {
               <button onClick={() => handleRemoveItem("contact", index)}>-</button>
             </div>
           ))}
-          <button
-            onClick={() =>
-              handleAddItem("contact", { icon: "📞", value: "", link: "" })
-            }
-            >
-            + Add Contact
-          </button>
+          <div>
+              <select
+                value={newItemType.type}
+                onChange={(e) =>
+                  setNewItemType((prev) => ({ ...prev, type: e.target.value }))
+                }
+              >
+                <option value="Phone">Phone</option>
+                <option value="Email">Email</option>
+                <option value="Website">Website</option>
+                <option value="Address">Address</option>
+              </select>
+              <button onClick={() => handleAddItem("contact")}>+ Add Contact</button>
+            </div>
         </section>
 
         {/* Skills */}
@@ -148,9 +242,7 @@ const Template1 = ({ onSave, content }) => {
               <button onClick={() => handleRemoveItem("skills", index)}>-</button>
             </div>
           ))}
-          <button onClick={() => handleAddItem("skills", { name: "", rating: 1 })}>
-            + Add Skill
-          </button>
+          <button onClick={() => handleAddItem("skills")}>+ Add Skill</button>
         </section>
 
         {/* Software Skills */}
@@ -181,9 +273,7 @@ const Template1 = ({ onSave, content }) => {
               <button onClick={() => handleRemoveItem("softwareSkills", index)}>-</button>
             </div>
           ))}
-          <button onClick={() => handleAddItem("softwareSkills", { name: "", rating: 1 })}>
-            + Add Software Skill
-          </button>
+          <button onClick={() => handleAddItem("softwareSkills")}>+ Add Software Skill</button>
         </section>
 
         {/* Languages */}
@@ -214,13 +304,7 @@ const Template1 = ({ onSave, content }) => {
               <button onClick={() => handleRemoveItem("languages", index)}>-</button>
             </div>
           ))}
-          <button
-            onClick={() =>
-              handleAddItem("languages", { name: "", rating: 1 })
-            }
-          >
-            + Add Language
-          </button>
+          <button onClick={() => handleAddItem("languages")}>+ Add Language</button>
         </section>
       </div>
 
@@ -255,16 +339,33 @@ const Template1 = ({ onSave, content }) => {
                 }
                 placeholder="Enter institution"
                 />
+              <input
+                type="date"
+                value={edu.startDate}
+                onChange={(e) =>
+                  handleSectionChange("education", index, "startDate", e.target.value)
+                }
+                placeholder="Start date"
+              />
+              <input
+                type="date"
+                value={edu.endDate}
+                onChange={(e) =>
+                  handleSectionChange("education", index, "endDate", e.target.value)
+                }
+                placeholder="End date"
+              />
+              <textarea
+                value={edu.description}
+                onChange={(e) =>
+                  handleSectionChange("education", index, "description", e.target.value)
+                }
+                placeholder="Enter description"
+              />
               <button onClick={() => handleRemoveItem("education", index)}>-</button>
             </div>
           ))}
-          <button
-            onClick={() =>
-              handleAddItem("education", { degree: "", institution: "" })
-            }
-          >
-            + Add Education
-          </button>
+          <button onClick={() => handleAddItem("education")}>+ Add Education</button>
         </section>
         <section className="work-experience">
           <h2>Work Experience</h2>
@@ -287,6 +388,22 @@ const Template1 = ({ onSave, content }) => {
                   }
                   placeholder="Enter company name"
                 />
+                <input
+                  type="date"
+                  value={work.startDate}
+                  onChange={(e) =>
+                    handleSectionChange("workExperience", index, "startDate", e.target.value)
+                  }
+                  placeholder="Start date"
+                />
+                <input
+                  type="date"
+                  value={work.endDate}
+                  onChange={(e) =>
+                    handleSectionChange("workExperience", index, "endDate", e.target.value)
+                  }
+                  placeholder="End date"
+                />
                 <textarea
                   value={work.description}
                   onChange={(e) =>
@@ -297,19 +414,7 @@ const Template1 = ({ onSave, content }) => {
                 <button onClick={() => handleRemoveItem("workExperience", index)}>-</button>
               </div>
             ))}
-          <button
-            onClick={() =>
-              handleAddItem("workExperience", {
-                title: "",
-                company: "",
-                description: "",
-                startDate: "",
-                endDate: "",
-              })
-            }
-          >
-            + Add Work
-          </button>
+          <button onClick={() => handleAddItem("workExperience")}>+ Add Work</button>
         </section>
         <section className="projects">
           <h2>Projects</h2>
@@ -323,6 +428,22 @@ const Template1 = ({ onSave, content }) => {
                 }
                 placeholder="Enter project title"
               />
+              <input
+                  type="date"
+                  value={project.startDate}
+                  onChange={(e) =>
+                    handleSectionChange("projects", index, "startDate", e.target.value)
+                  }
+                  placeholder="Start date"
+                />
+              <input
+                type="date"
+                value={project.endDate}
+                onChange={(e) =>
+                  handleSectionChange("projects", index, "endDate", e.target.value)
+                }
+                placeholder="End date"
+              />
               <textarea
                 value={project.description}
                 onChange={(e) =>
@@ -333,9 +454,7 @@ const Template1 = ({ onSave, content }) => {
               <button onClick={() => handleRemoveItem("projects", index)}>-</button>
             </div>
           ))}
-          <button onClick={() => handleAddItem("projects", { title: "", description: "" })}>
-            + Add Project
-          </button>
+          <button onClick={() => handleAddItem("projects")}>+ Add Project</button>
         </section>
       </div>
     </div>
