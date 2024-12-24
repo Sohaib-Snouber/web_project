@@ -266,7 +266,51 @@ const Template1 = ({ onSave, content }) => {
             + Add Education
           </button>
         </section>
-
+        <section className="work-experience">
+          <h2>Work Experience</h2>
+          {Array.isArray(resume.workExperience) &&
+            resume.workExperience.map((work, index) => (
+              <div key={index}>
+                <input
+                  type="text"
+                  value={work.title}
+                  onChange={(e) =>
+                    handleSectionChange("workExperience", index, "title", e.target.value)
+                  }
+                  placeholder="Enter job title"
+                />
+                <input
+                  type="text"
+                  value={work.company}
+                  onChange={(e) =>
+                    handleSectionChange("workExperience", index, "company", e.target.value)
+                  }
+                  placeholder="Enter company name"
+                />
+                <textarea
+                  value={work.description}
+                  onChange={(e) =>
+                    handleSectionChange("workExperience", index, "description", e.target.value)
+                  }
+                  placeholder="Enter job description"
+                />
+                <button onClick={() => handleRemoveItem("workExperience", index)}>-</button>
+              </div>
+            ))}
+          <button
+            onClick={() =>
+              handleAddItem("workExperience", {
+                title: "",
+                company: "",
+                description: "",
+                startDate: "",
+                endDate: "",
+              })
+            }
+          >
+            + Add Work
+          </button>
+        </section>
         <section className="projects">
           <h2>Projects</h2>
           {resume.projects.map((project, index) => (
@@ -294,20 +338,9 @@ const Template1 = ({ onSave, content }) => {
           </button>
         </section>
       </div>
-
-    <br></br>
-    <br></br>
-    <br></br>
-    <br></br>
-    <br></br>
-    <br></br>
-    <br></br>
-    <br></br>
-
     </div>
     <button className= "save button" onClick={() => onSave(resume)}>Save Resume</button>
-
-                </div>
+  </div>
   );
 };
 
