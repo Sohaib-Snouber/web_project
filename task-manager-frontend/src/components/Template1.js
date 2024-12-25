@@ -5,7 +5,6 @@ import "./Template1.css"
 
 const Template1 = ({ onSave, content }) => {
   const [resume, setResume] = useState(content || SampleData1);
-  const [newItemType, setNewItemType] = useState({ section: "contact", type: "Phone" }); // Default section and type
 
   useEffect(() => {
     if (content) {
@@ -22,6 +21,26 @@ const Template1 = ({ onSave, content }) => {
     setResume((prev) => {
       const updatedSection = [...prev[section]];
       updatedSection[index][field] = value;
+
+      // Dynamically update the icon if the type changes
+      if (section === "contact" && field === "type") {
+        switch (value) {
+          case "Email":
+            updatedSection[index].icon = "✉️";
+            break;
+          case "Website":
+            updatedSection[index].icon = "🔗";
+            break;
+          case "Phone":
+            updatedSection[index].icon = "📞";
+            break;
+          case "Address":
+            updatedSection[index].icon = "📍";
+            break;
+          default:
+            updatedSection[index].icon = ""; // Default or no icon
+        }
+      }
       return { ...prev, [section]: updatedSection };
     });
   };
@@ -35,24 +54,20 @@ const Template1 = ({ onSave, content }) => {
         newItem = {
           icon: "",
           value: "",
-          link: "",
+          type: "Phone", // Default type
         };
-        switch (newItemType.type) {
+        switch (newItem.type) {
           case "Email":
             newItem.icon = "✉️";
-            newItem.link = "mailto:";
             break;
           case "Website":
             newItem.icon = "🔗";
-            newItem.link = "http://";
             break;
           case "Phone":
             newItem.icon = "📞";
-            newItem.link = "tel:";
             break;
           case "Address":
             newItem.icon = "📍";
-            newItem.value = "City, Street, Country";
             break;
           default:
             break;
@@ -184,41 +199,28 @@ const Template1 = ({ onSave, content }) => {
           <h2>Contact</h2>
           {resume.contact.map((item, index) => (
             <div key={index}>
+              <span className="contact-icon">{item.icon}</span>
               <input
                 type="text"
                 value={item.value}
                 onChange={(e) =>
                   handleSectionChange("contact", index, "value", e.target.value)
                 }
-                placeholder="Enter contact info"
+                placeholder={`Enter ${item.type}...`} // Dynamically show placeholder based on type
                 />
-              {item.link && (
-                <input
-                type="text"
-                  value={item.link}
-                  onChange={(e) =>
-                    handleSectionChange("contact", index, "link", e.target.value)
-                  }
-                  placeholder="Enter link"
-                  />
-              )}
-              <button onClick={() => handleRemoveItem("contact", index)}>-</button>
-            </div>
-          ))}
-          <div>
               <select
-                value={newItemType.type}
-                onChange={(e) =>
-                  setNewItemType((prev) => ({ ...prev, type: e.target.value }))
-                }
+                value={item.type}
+                onChange={(e) => handleSectionChange("contact", index, "type", e.target.value)}
               >
                 <option value="Phone">Phone</option>
                 <option value="Email">Email</option>
                 <option value="Website">Website</option>
                 <option value="Address">Address</option>
               </select>
-              <button onClick={() => handleAddItem("contact")}>+ Add Contact</button>
+              <button onClick={() => handleRemoveItem("contact", index)}>-</button>
             </div>
+          ))} 
+          <button onClick={() => handleAddItem("contact", { icon: "📞", type: "Phone", value: "" })}>+ Add Contact</button>
         </section>
 
         {/* Skills */}

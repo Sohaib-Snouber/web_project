@@ -24,7 +24,18 @@ const Template1Preview = ({ content }) => {
           <section className="profile">
             <h2>Contact</h2>
             {content.contact.map((item, index) => (
-              <p key={index}>{item.value}</p>
+              <p key={index}>
+                <span>{item.icon}</span>{" "}
+                {item.type === "Website" ? (
+                  <a href={item.value} target="_blank" rel="noopener noreferrer">
+                    {item.value}
+                  </a>
+                ) : item.type === "Email" ? (
+                  <a href={`mailto:${item.value}`}>{item.value}</a>
+                ) : (
+                  item.value // Non-clickable for Phone and Address
+                )}
+              </p>
             ))}
           </section>
 
