@@ -86,6 +86,7 @@ const Template1 = ({ onSave, content }) => {
           institution: "New Institution",
           startDate: "",
           endDate: "",
+          isPresent: false,
           description: "",
         };
         break;
@@ -96,6 +97,7 @@ const Template1 = ({ onSave, content }) => {
           company: "New Company",
           description: "",
           startDate: "",
+          isPresent: false,
           endDate: "",
         };
         break;
@@ -106,6 +108,7 @@ const Template1 = ({ onSave, content }) => {
           description: "New Project Description",
           startDate: "",
           endDate: "",
+          isPresent: false,
         };
         break;
 
@@ -340,7 +343,7 @@ const Template1 = ({ onSave, content }) => {
                 placeholder="Enter institution"
                 />
               <input
-                type="date"
+                type="month"
                 value={edu.startDate}
                 onChange={(e) =>
                   handleSectionChange("education", index, "startDate", e.target.value)
@@ -348,7 +351,7 @@ const Template1 = ({ onSave, content }) => {
                 placeholder="Start date"
               />
               <input
-                type="date"
+                type="month"
                 value={edu.endDate}
                 onChange={(e) =>
                   handleSectionChange("education", index, "endDate", e.target.value)
@@ -389,7 +392,7 @@ const Template1 = ({ onSave, content }) => {
                   placeholder="Enter company name"
                 />
                 <input
-                  type="date"
+                  type="month"
                   value={work.startDate}
                   onChange={(e) =>
                     handleSectionChange("workExperience", index, "startDate", e.target.value)
@@ -397,7 +400,7 @@ const Template1 = ({ onSave, content }) => {
                   placeholder="Start date"
                 />
                 <input
-                  type="date"
+                  type="month"
                   value={work.endDate}
                   onChange={(e) =>
                     handleSectionChange("workExperience", index, "endDate", e.target.value)
@@ -429,21 +432,33 @@ const Template1 = ({ onSave, content }) => {
                 placeholder="Enter project title"
               />
               <input
-                  type="date"
+                  type="month"
                   value={project.startDate}
                   onChange={(e) =>
                     handleSectionChange("projects", index, "startDate", e.target.value)
                   }
                   placeholder="Start date"
                 />
-              <input
-                type="date"
-                value={project.endDate}
-                onChange={(e) =>
-                  handleSectionChange("projects", index, "endDate", e.target.value)
-                }
-                placeholder="End date"
-              />
+              {!project.isPresent && (
+                <input
+                  type="month"
+                  value={project.endDate}
+                  onChange={(e) =>
+                    handleSectionChange("projects", index, "endDate", e.target.value)
+                  }
+                  placeholder="End date"
+                />
+              )}
+              <label className="project-checkbox">
+                <input
+                  type="checkbox"
+                  checked={project.isPresent || false}
+                  onChange={(e) =>
+                    handleSectionChange("projects", index, "isPresent", e.target.checked)
+                  }
+                />
+                Present
+              </label>              
               <textarea
                 value={project.description}
                 onChange={(e) =>
