@@ -6,10 +6,6 @@ const SampleData1 = {
     },
     contact: [
       { icon: "📞", value: "+49 17636842373" },
-      { icon: "✉️", value: "yourmail@mail.com", link: "mailto:youlmail@mail.com" },
-      { icon: "📍", value: "Goettingen, Robert Koch Str. 38" },
-      { icon: "🔗", value: "LinkedIn", link: "https://www.linkedin.com/in/your-profile" },
-      { icon: "🔗", value: "GitHub", link: "https://github.com/Your-Profile" },
     ],
     skills: [
       { name: "Time management", rating: 5 },
@@ -26,9 +22,10 @@ const SampleData1 = {
       {
         degree: "Bachelor's in Electrical and Information Engineering",
         institution: "HAWK University, Goettingen, Germany",
-        startDate: "April 2023",
-        endDate: "October 2025",
+        startDate: "2023-04",
+        endDate: "2025-10",
         description: "",
+        isPresent: false,
       },
     ],
     projects: [
@@ -36,8 +33,9 @@ const SampleData1 = {
         title: "Master's Praxis Project - UR5e Robot",
         description:
           "Worked on advanced motion planning, robotic manipulation, and sensor integration using the UR5e robotic arm.",
-        startDate: "April 2024",
-        endDate: "July 2024",
+        startDate: "2024-04",
+        endDate: "2024-07",
+        isPresent: false,
       },
     ],
     workExperience: [
@@ -46,8 +44,9 @@ const SampleData1 = {
         company: "HAWK University, Goettingen, Germany",
         description:
           "Working on integrating the Zivid 3D camera with robotics for sensor-based automation, focusing on object detection and manipulation tasks using ROS2.",
-        startDate: "August 2024",
-        endDate: "Present",
+        startDate: "2024-08",
+        endDate: "",
+        isPresent: true,
       },
     ],
   };
