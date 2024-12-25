@@ -56,7 +56,6 @@ const Template1Preview = ({ content }) => {
         {/* Main Content */}
         <div className="main-content">
           <section className="summary">
-            <h2>Summary</h2>
             <p>{content.summary}</p>
           </section>
 

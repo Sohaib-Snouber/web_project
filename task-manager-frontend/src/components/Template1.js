@@ -314,7 +314,6 @@ const Template1 = ({ onSave, content }) => {
       {/* Main Content */}
       <div className="main-content">
         <section className="summary">
-          <h2>Summary</h2>
           <textarea
             value={resume.summary}
             onChange={(e) => handleFieldChange("summary", e.target.value)}
@@ -350,14 +349,26 @@ const Template1 = ({ onSave, content }) => {
                 }
                 placeholder="Start date"
               />
-              <input
-                type="month"
-                value={edu.endDate}
-                onChange={(e) =>
-                  handleSectionChange("education", index, "endDate", e.target.value)
-                }
-                placeholder="End date"
-              />
+              {!edu.isPresent && (
+                <input
+                  type="month"
+                  value={edu.endDate}
+                  onChange={(e) =>
+                    handleSectionChange("education", index, "endDate", e.target.value)
+                  }
+                  placeholder="End date"
+                />
+              )}
+              <label>
+                <input
+                  type="checkbox"
+                  checked={edu.isPresent || false}
+                  onChange={(e) =>
+                    handleSectionChange("education", index, "isPresent", e.target.checked)
+                  }
+                />
+                Present
+              </label> 
               <textarea
                 value={edu.description}
                 onChange={(e) =>
@@ -399,14 +410,26 @@ const Template1 = ({ onSave, content }) => {
                   }
                   placeholder="Start date"
                 />
-                <input
-                  type="month"
-                  value={work.endDate}
-                  onChange={(e) =>
-                    handleSectionChange("workExperience", index, "endDate", e.target.value)
-                  }
-                  placeholder="End date"
-                />
+                {!work.isPresent && (
+                  <input
+                    type="month"
+                    value={work.endDate}
+                    onChange={(e) =>
+                      handleSectionChange("workExperience", index, "endDate", e.target.value)
+                    }
+                    placeholder="End date"
+                  />
+                )}
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={work.isPresent || false}
+                    onChange={(e) =>
+                      handleSectionChange("workExperience", index, "isPresent", e.target.checked)
+                    }
+                  />
+                  Present
+                </label>
                 <textarea
                   value={work.description}
                   onChange={(e) =>
@@ -449,7 +472,7 @@ const Template1 = ({ onSave, content }) => {
                   placeholder="End date"
                 />
               )}
-              <label className="project-checkbox">
+              <label>
                 <input
                   type="checkbox"
                   checked={project.isPresent || false}
