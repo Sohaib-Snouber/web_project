@@ -66,6 +66,16 @@ const Template1Preview = ({ content }) => {
               <div key={index}>
                 <p>{edu.degree}</p>
                 <p>{edu.institution}</p>
+                {edu.startDate || edu.endDate || edu.isPresent ? (
+                  <p>
+                    {edu.startDate && <span>{edu.startDate}</span>}
+                    {edu.startDate && (edu.endDate || edu.isPresent) && <strong> - </strong>}
+                    {edu.isPresent ? <span>Present</span> : edu.endDate && <span>{edu.endDate}</span>}
+                  </p>
+                ) : null}
+                {edu.description && (
+                  <p>{edu.description}</p>
+                )}
               </div>
             ))}
           </section>
@@ -76,7 +86,16 @@ const Template1Preview = ({ content }) => {
               <div key={index}>
                 <p>{work.title}</p>
                 <p>{work.company}</p>
-                <p>{work.description}</p>
+                {work.startDate || work.endDate || work.isPresent ? (
+                  <p>
+                    {work.startDate && <span>{work.startDate}</span>}
+                    {work.startDate && (work.endDate || work.isPresent) && <strong> - </strong>}
+                    {work.isPresent ? <span>Present</span> : work.endDate && <span>{work.endDate}</span>}
+                  </p>
+                ) : null}
+                {work.description && (
+                  <p>{work.description}</p>
+                )}
               </div>
             ))}
           </section>
@@ -86,7 +105,18 @@ const Template1Preview = ({ content }) => {
             {content.projects.map((project, index) => (
               <div key={index}>
                 <p>{project.title}</p>
-                <p>{project.description}</p>
+                  {project.startDate || project.endDate || project.isPresent? (
+                    <p>
+                      {project.startDate && <span>{project.startDate}</span>}
+                      {project.startDate && (project.endDate || project.isPresent) && <strong> - </strong>}
+                      {project.isPresent ? <span>Present</span> : project.endDate && <span>{project.endDate}</span>}
+                    </p>
+                  ) : null}
+                  {project.description && (
+                    <p>
+                      {project.description}
+                    </p>
+                  )}
               </div>
             ))}
           </section>
