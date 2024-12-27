@@ -4,11 +4,13 @@ import Template1 from "./Template1";
 import "./MyCVs.css";
 import Header from "./Header";
 import config from "../config";
+import Template1Preview from "./Template1Preview";
 
 function MyCVs() {
   const [resumes, setResumes] = useState([]);
   const [selectedResume, setSelectedResume] = useState(null);
   const [resumeContent, setResumeContent] = useState(null);
+  const [previewMode, setPreviewMode] = useState(false); // New state for preview mode
 
   // Fetch resumes on component mount
   useEffect(() => {
@@ -33,6 +35,7 @@ function MyCVs() {
     try {
       setSelectedResume(resume);
       setResumeContent(resume.content); // Load the content from the selected resume
+      setPreviewMode(false); // Reset preview mode on new selection
     } catch (error) {
       console.error("Error loading resume:", error);
     }
@@ -94,7 +97,21 @@ function MyCVs() {
         {/* Resume Display Panel */}
         <div className="resume-panel">
           {selectedResume ? (
-            <Template1 onSave={handleSaveResume} content={resumeContent} />
+            <>
+              <div className="actions">
+                <button onClick={() => setPreviewMode(!previewMode)}>
+                  {previewMode ? "Edit Mode" : "Preview Mode"}
+                </button>
+              </div>
+              {previewMode ? (
+                <Template1Preview content={resumeContent} />
+              ) : (
+                <Template1
+                  content={resumeContent}
+                  onSave={handleSaveResume}
+                />
+              )}
+            </>
           ) : (
             <h1>Select a resume to view or edit</h1>
           )}

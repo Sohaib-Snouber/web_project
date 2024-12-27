@@ -21,11 +21,116 @@ const Template1 = ({ onSave, content }) => {
     setResume((prev) => {
       const updatedSection = [...prev[section]];
       updatedSection[index][field] = value;
+
+      // Dynamically update the icon if the type changes
+      if (section === "contact" && field === "type") {
+        switch (value) {
+          case "Email":
+            updatedSection[index].icon = "✉️";
+            break;
+          case "Website":
+            updatedSection[index].icon = "🔗";
+            break;
+          case "Phone":
+            updatedSection[index].icon = "📞";
+            break;
+          case "Address":
+            updatedSection[index].icon = "📍";
+            break;
+          default:
+            updatedSection[index].icon = ""; // Default or no icon
+        }
+      }
       return { ...prev, [section]: updatedSection };
     });
   };
 
-  const handleAddItem = (section, newItem) => {
+  const handleAddItem = (section) => {
+    let newItem = {};
+
+    // Define default structures for each section
+    switch (section) {
+      case "contact":
+        newItem = {
+          icon: "",
+          value: "",
+          type: "Phone", // Default type
+        };
+        switch (newItem.type) {
+          case "Email":
+            newItem.icon = "✉️";
+            break;
+          case "Website":
+            newItem.icon = "🔗";
+            break;
+          case "Phone":
+            newItem.icon = "📞";
+            break;
+          case "Address":
+            newItem.icon = "📍";
+            break;
+          default:
+            break;
+        }
+        break;
+
+      case "skills":
+        newItem = {
+          name: "New Skill",
+          rating: 1,
+        };
+        break;
+
+      case "softwareSkills":
+        newItem = {
+          name: "New Software",
+          rating: 1,
+        };
+        break;
+
+      case "languages":
+        newItem = {
+          name: "New Language",
+          rating: 1,
+        };
+        break;
+
+      case "education":
+        newItem = {
+          degree: "New Degree",
+          institution: "New Institution",
+          startDate: "",
+          endDate: "",
+          isPresent: false,
+          description: "",
+        };
+        break;
+
+      case "workExperience":
+        newItem = {
+          title: "New Job Title",
+          company: "New Company",
+          description: "",
+          startDate: "",
+          isPresent: false,
+          endDate: "",
+        };
+        break;
+
+      case "projects":
+        newItem = {
+          title: "New Project Title",
+          description: "New Project Description",
+          startDate: "",
+          endDate: "",
+          isPresent: false,
+        };
+        break;
+
+      default:
+        break;
+    }
+
     setResume((prev) => ({
       ...prev,
       [section]: [...prev[section], newItem],
@@ -94,34 +199,28 @@ const Template1 = ({ onSave, content }) => {
           <h2>Contact</h2>
           {resume.contact.map((item, index) => (
             <div key={index}>
+              <span className="contact-icon">{item.icon}</span>
               <input
                 type="text"
                 value={item.value}
                 onChange={(e) =>
                   handleSectionChange("contact", index, "value", e.target.value)
                 }
-                placeholder="Enter contact info"
+                placeholder={`Enter ${item.type}...`} // Dynamically show placeholder based on type
                 />
-              {item.link && (
-                <input
-                type="text"
-                  value={item.link}
-                  onChange={(e) =>
-                    handleSectionChange("contact", index, "link", e.target.value)
-                  }
-                  placeholder="Enter link"
-                  />
-              )}
+              <select
+                value={item.type}
+                onChange={(e) => handleSectionChange("contact", index, "type", e.target.value)}
+              >
+                <option value="Phone">Phone</option>
+                <option value="Email">Email</option>
+                <option value="Website">Website</option>
+                <option value="Address">Address</option>
+              </select>
               <button onClick={() => handleRemoveItem("contact", index)}>-</button>
             </div>
-          ))}
-          <button
-            onClick={() =>
-              handleAddItem("contact", { icon: "📞", value: "", link: "" })
-            }
-            >
-            + Add Contact
-          </button>
+          ))} 
+          <button onClick={() => handleAddItem("contact", { icon: "📞", type: "Phone", value: "" })}>+ Add Contact</button>
         </section>
 
         {/* Skills */}
@@ -148,9 +247,7 @@ const Template1 = ({ onSave, content }) => {
               <button onClick={() => handleRemoveItem("skills", index)}>-</button>
             </div>
           ))}
-          <button onClick={() => handleAddItem("skills", { name: "", rating: 1 })}>
-            + Add Skill
-          </button>
+          <button onClick={() => handleAddItem("skills")}>+ Add Skill</button>
         </section>
 
         {/* Software Skills */}
@@ -181,9 +278,7 @@ const Template1 = ({ onSave, content }) => {
               <button onClick={() => handleRemoveItem("softwareSkills", index)}>-</button>
             </div>
           ))}
-          <button onClick={() => handleAddItem("softwareSkills", { name: "", rating: 1 })}>
-            + Add Software Skill
-          </button>
+          <button onClick={() => handleAddItem("softwareSkills")}>+ Add Software Skill</button>
         </section>
 
         {/* Languages */}
@@ -214,20 +309,13 @@ const Template1 = ({ onSave, content }) => {
               <button onClick={() => handleRemoveItem("languages", index)}>-</button>
             </div>
           ))}
-          <button
-            onClick={() =>
-              handleAddItem("languages", { name: "", rating: 1 })
-            }
-          >
-            + Add Language
-          </button>
+          <button onClick={() => handleAddItem("languages")}>+ Add Language</button>
         </section>
       </div>
 
       {/* Main Content */}
       <div className="main-content">
         <section className="summary">
-          <h2>Summary</h2>
           <textarea
             value={resume.summary}
             onChange={(e) => handleFieldChange("summary", e.target.value)}
@@ -255,18 +343,107 @@ const Template1 = ({ onSave, content }) => {
                 }
                 placeholder="Enter institution"
                 />
+              <input
+                type="month"
+                value={edu.startDate}
+                onChange={(e) =>
+                  handleSectionChange("education", index, "startDate", e.target.value)
+                }
+                placeholder="Start date"
+              />
+              {!edu.isPresent && (
+                <input
+                  type="month"
+                  value={edu.endDate}
+                  onChange={(e) =>
+                    handleSectionChange("education", index, "endDate", e.target.value)
+                  }
+                  placeholder="End date"
+                />
+              )}
+              <label>
+                <input
+                  type="checkbox"
+                  checked={edu.isPresent || false}
+                  onChange={(e) =>
+                    handleSectionChange("education", index, "isPresent", e.target.checked)
+                  }
+                />
+                Present
+              </label> 
+              <textarea
+                value={edu.description}
+                onChange={(e) =>
+                  handleSectionChange("education", index, "description", e.target.value)
+                }
+                placeholder="Enter description"
+              />
               <button onClick={() => handleRemoveItem("education", index)}>-</button>
             </div>
           ))}
-          <button
-            onClick={() =>
-              handleAddItem("education", { degree: "", institution: "" })
-            }
-          >
-            + Add Education
-          </button>
+          <button onClick={() => handleAddItem("education")}>+ Add Education</button>
         </section>
-
+        <section className="work-experience">
+          <h2>Work Experience</h2>
+          {Array.isArray(resume.workExperience) &&
+            resume.workExperience.map((work, index) => (
+              <div key={index}>
+                <input
+                  type="text"
+                  value={work.title}
+                  onChange={(e) =>
+                    handleSectionChange("workExperience", index, "title", e.target.value)
+                  }
+                  placeholder="Enter job title"
+                />
+                <input
+                  type="text"
+                  value={work.company}
+                  onChange={(e) =>
+                    handleSectionChange("workExperience", index, "company", e.target.value)
+                  }
+                  placeholder="Enter company name"
+                />
+                <input
+                  type="month"
+                  value={work.startDate}
+                  onChange={(e) =>
+                    handleSectionChange("workExperience", index, "startDate", e.target.value)
+                  }
+                  placeholder="Start date"
+                />
+                {!work.isPresent && (
+                  <input
+                    type="month"
+                    value={work.endDate}
+                    onChange={(e) =>
+                      handleSectionChange("workExperience", index, "endDate", e.target.value)
+                    }
+                    placeholder="End date"
+                  />
+                )}
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={work.isPresent || false}
+                    onChange={(e) =>
+                      handleSectionChange("workExperience", index, "isPresent", e.target.checked)
+                    }
+                  />
+                  Present
+                </label>
+                <textarea
+                  value={work.description}
+                  onChange={(e) =>
+                    handleSectionChange("workExperience", index, "description", e.target.value)
+                  }
+                  placeholder="Enter job description"
+                />
+                <button onClick={() => handleRemoveItem("workExperience", index)}>-</button>
+              </div>
+            ))}
+          <button onClick={() => handleAddItem("workExperience")}>+ Add Work</button>
+        </section>
         <section className="projects">
           <h2>Projects</h2>
           {resume.projects.map((project, index) => (
@@ -279,6 +456,34 @@ const Template1 = ({ onSave, content }) => {
                 }
                 placeholder="Enter project title"
               />
+              <input
+                  type="month"
+                  value={project.startDate}
+                  onChange={(e) =>
+                    handleSectionChange("projects", index, "startDate", e.target.value)
+                  }
+                  placeholder="Start date"
+                />
+              {!project.isPresent && (
+                <input
+                  type="month"
+                  value={project.endDate}
+                  onChange={(e) =>
+                    handleSectionChange("projects", index, "endDate", e.target.value)
+                  }
+                  placeholder="End date"
+                />
+              )}
+              <label>
+                <input
+                  type="checkbox"
+                  checked={project.isPresent || false}
+                  onChange={(e) =>
+                    handleSectionChange("projects", index, "isPresent", e.target.checked)
+                  }
+                />
+                Present
+              </label>              
               <textarea
                 value={project.description}
                 onChange={(e) =>
@@ -289,25 +494,12 @@ const Template1 = ({ onSave, content }) => {
               <button onClick={() => handleRemoveItem("projects", index)}>-</button>
             </div>
           ))}
-          <button onClick={() => handleAddItem("projects", { title: "", description: "" })}>
-            + Add Project
-          </button>
+          <button onClick={() => handleAddItem("projects")}>+ Add Project</button>
         </section>
       </div>
-
-    <br></br>
-    <br></br>
-    <br></br>
-    <br></br>
-    <br></br>
-    <br></br>
-    <br></br>
-    <br></br>
-
     </div>
     <button className= "save button" onClick={() => onSave(resume)}>Save Resume</button>
-
-                </div>
+  </div>
   );
 };
 
