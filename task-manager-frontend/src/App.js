@@ -6,6 +6,7 @@ import Signin from "./components/Signin";
 import Profile from "./components/Profile";
 //import Verify from "./components/verify";
 import MyCVs from "./components/MyCVs";
+import ForgotPassword from "./components/forgotpassword"; 
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
@@ -34,6 +35,7 @@ function App() {
             <Route path="/" element={<WelcomePage />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/signin" element={<Signin onSignin={handleSignin} />} />
+            <Route path="/forgotpassword" element={<ForgotPassword />} /> 
             <Route path="*" element={<Navigate to="/" />} />
           </>
         ) : (
