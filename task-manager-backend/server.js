@@ -9,7 +9,7 @@ const Resume = require("./models/Resume");
 const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
 
 require('dotenv').config({ path: '../.env' });
- 
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -19,6 +19,7 @@ const dbChoice = 2; // Set to 1 for local MongoDB, 2 for cloud MongoDB Atlas
 
 // Use the appropriate MongoDB URI based on dbChoice
 const mongooseUri = dbChoice === 1
+
   ? "mongodb://localhost:27017/taskDB" // Local MongoDB URI
   : process.env.MONGO_URI;             // Cloud MongoDB URI from .env
 
@@ -56,43 +57,10 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// Routes
-app.get("/tasks", authenticate, async (req, res) => {
-  try {
-    const tasks = await Task.find({ userId: req.userId });
-    res.json(tasks);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.post("/tasks", authenticate, async (req, res) => {
-  try {
-    const newTask = new Task({
-      text: req.body.text,
-      userId: req.userId
-    });
-    await newTask.save();
-    res.json(newTask);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.delete("/tasks/:id", authenticate, async (req, res) => {
-  try {
-    const taskId = req.params.id;
-    await Task.deleteOne({ _id: taskId, userId: req.userId }); // Only delete if it belongs to the user
-    res.json({ message: "Task deleted" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Signup Route
 app.post("/signup", async (req, res) => {
   try {
-    const { email, password, dob } = req.body;  // dob: date of birth
+    const { email, password } = req.body;  
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
@@ -135,13 +103,13 @@ app.post("/signup", async (req, res) => {
 
     const command = new SendEmailCommand(params);
     client.send(command)
-    .then((data) => console.log("Email sent successfully:", data))
-    .catch((error) => console.error("Error sending email:", error));
-    
+      .then((data) => console.log("Email sent successfully:", data))
+      .catch((error) => console.error("Error sending email:", error));
+
     const command2 = new SendEmailCommand(params);
     client.send(command2)
-    .then((data) => console.log("Email sent successfully:", data))
-    .catch((error) => console.error("Error sending email:", error));
+      .then((data) => console.log("Email sent successfully:", data))
+      .catch((error) => console.error("Error sending email:", error));
 
     res.status(201).json({
       message: "User created successfully. Check your email for the verification code.",
@@ -247,24 +215,26 @@ app.post("/signin", async (req, res) => {
     const token = jwt.sign({ userId: user._id }, SECRET_KEY, { expiresIn: "1h" });
     res.json({ token, message: "Sign in successful" });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 });
 
  // forgot password
-app.post("/forgotpassword", authenticate, async (req, res) => {
-  const { email, dob, newPassword } = req.body;
-
+app.post("/forgotpassword", async (req, res) => {
+  
   try {
-    // Find the user based on the user ID extracted from the token
-    const user = await User.findById(req.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" }); // Return error if user does not exist
-    }
+    const { email, newPassword } = req.body;
 
-    // Verify the date of birth
-    if (user.dob !== dob) {
-      return res.status(400).json({ message: "Date of birth is incorrect" });
+    // Basic validation
+    if (!email || !newPassword) {
+      console.error("Missing required fields:", { email, newPassword });
+      return res.status(400).json({ message: "Email and new password are required." });
+    }
+    // Find the user based on the email of the user 
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({  message: "User with the provided email does not exist." }); // Return error if user does not exist
     }
 
     // Hash the new password and update it in the database
@@ -317,19 +287,20 @@ app.get("/profile", authenticate, async (req, res) => {
 
 app.listen(5001, () => {
   console.log("Server is running on port 5001");
-});  
+});
 
 app.get("/resumes", authenticate, async (req, res) => {
   try {
     const resumes = await Resume.find({ userId: req.userId });
     res.json(resumes);
   } catch (error) {
+    console.error("Error fetching resumes:", error);
     res.status(500).json({ error: error.message });
   }
 });
 
 app.post("/resumes", authenticate, async (req, res) => {
-  const { name, sections } = req.body;
+  const { name, format, content } = req.body;
   try {
     // Check if a resume with the same name already exists for the user
     const existingResume = await Resume.findOne({ name, userId: req.userId });
@@ -338,13 +309,15 @@ app.post("/resumes", authenticate, async (req, res) => {
     }
 
     const newResume = new Resume({
-      userId: req.userId,
+      userId: req.userId, // Use userId from middleware
       name,
-      sections
+      format,
+      content
     });
     await newResume.save();
     res.status(201).json(newResume);
   } catch (error) {
+    console.error("Error saving resume:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -362,13 +335,13 @@ app.get("/resumes/:name", authenticate, async (req, res) => {
 
 // Route to update an existing resume with new sections
 app.put("/resumes/:name", authenticate, async (req, res) => {
-  const { sections } = req.body;
+  const { format, content } = req.body;
 
   try {
     // Find the resume by name and userId, then update the sections
     const updatedResume = await Resume.findOneAndUpdate(
-      { name: req.params.name, userId: req.userId },
-      { $push: { sections: { $each: sections } } }, // Add new sections to the existing array
+      { userId: req.userId, name: req.params.name }, // Match by userId and name
+      { format, content },
       { new: true }
     );
 

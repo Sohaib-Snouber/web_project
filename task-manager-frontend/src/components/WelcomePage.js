@@ -1,27 +1,25 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "./WelcomePage.css"
+import Header from "./Header";
 
 function WelcomePage() {
   return (
-    <div style={{
-      backgroundColor: "#ADD8E6",
-      height: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "column",
-    }}>
-      <h1 style={{
-        fontSize: "4em",
-        color: "#333",
-        textAlign: "center",
-      }}>
-        Welcome to the Portfolio Project
-      </h1>
-      <p style={{ fontSize: "1.5em", color: "#555" }}>
-        Please <Link to="/signin" style={{ color: "#333", textDecoration: "underline" }}>sign in</Link> or <Link to="/signup" style={{ color: "#333", textDecoration: "underline" }}>sign up</Link> to get started.
-      </p>
-    </div>
+    <>
+      <Header />
+      <section className="main-section">
+        <div className="left-part">
+          <h3>
+            Welcome,<br />
+            <span>Feel Free</span> to create your CV now using the best CV Generator Tool!
+          </h3>
+          <Link to="/cv-builder" className="cta-button">Create CV</Link>
+        </div>
+        <div className="right-part">
+          <img src="/home2.jpg" alt="cv create image" className="home-image" />
+        </div>
+      </section>
+    </>
   );
 }
 

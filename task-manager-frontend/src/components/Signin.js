@@ -1,25 +1,30 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import axios from "axios";
 import config from "../config";
+import "./Signin.css";
 
 function Signin({ onSignin }) {
   const [email, setemail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleSignin = async () => {
+  const handleSignin = async (e) => {
     try {
+      e.preventDefault()
+
       const response = await axios.post(`${config.baseURL}/signin`, {
         email,
         password,
       });
+      console.log({ response })
       localStorage.setItem("token", response.data.token);
       // Notify App component that sign-in was successful
       onSignin();
       setMessage("Sign in successful!");
       window.location.href = "/profile"; // Redirect to profile
     } catch (error) {
+      console.log({ error })
       setMessage(error.response.data.message || "Error signing in");
     }
   };

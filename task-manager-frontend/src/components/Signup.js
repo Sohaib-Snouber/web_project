@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import config from "../config";
 import Verify from "./Verify";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css"; // Import the datepicker CSS
 import ResendEmail from "./resendemail";
 import "./Signup.css";
 
@@ -15,7 +13,8 @@ function Signup() {
   const [message, setMessage] = useState("");
   const [isVerified, setIsVerified] = useState(false);
 
-  const handleSignup = async () => {
+  const handleSignup = async (e) => {
+    e.preventDefault(); // Prevent page reload
     try {
       const response = await axios.post(`${config.baseURL}/signup`, {
         email,
@@ -25,7 +24,7 @@ function Signup() {
       console.log(response.data); // Debugging response
       setMessage(response.data.message);
     } catch (error) {
-      console.log(error.response); // Log the full error response
+      console.error("Signup error:", error.response || error.message);
       setMessage(error.response.data.message || "Error signing up");
     }
   };
@@ -66,18 +65,6 @@ function Signup() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-          />
-          <DatePicker
-            selected={dob}
-            onChange={(date) => setDob(date)}
-            dateFormat="yyyy-MM-dd" // Format displayed in the input
-            maxDate={new Date()} // Prevent selecting future dates
-            showYearDropdown
-            scrollableYearDropdown
-            yearDropdownItemNumber={100} // Show 100 years in dropdown
-            placeholderText="Select your date of birth"
-            className="datepicker-input"
-            required
           />
           <button onClick={(e) => handleSignup(e)} className="btn btn-primary Register-btn">Sign up</button>
           <p>{message}</p>

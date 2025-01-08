@@ -1,0 +1,54 @@
+.profile-container {
+  display: flex;
+  overflow: scroll;
+
+}
+
+.template-panel {
+  width: 30%;
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-right: 1px solid #ddd;
+}
+
+.template-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.template-card {
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  text-align: center;
+  width: 300px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Center the image */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.template-card img {
+  max-width: 100%; /* Image scales down if larger than the box width */
+  max-height: 100%; /* Image scales down if larger than the box height */
+  height: auto; /* Maintains aspect ratio */
+  width: auto; /* Maintains aspect ratio */
+}
+
+.template-card.selected {
+  border: 2px solid #007bff;
+  background-color: #e7f3ff;
+}
+
+.resume-panel {
+  position: relative;
+  width: 70%;
+  padding: 20px;
+  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: 100vh; /* Restrict to viewport height */
+
+}
+

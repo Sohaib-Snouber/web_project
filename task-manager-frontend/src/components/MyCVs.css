@@ -1,0 +1,53 @@
+/* General Layout */
+.profile-container {
+  display: flex;
+  height: 90vh; /* Use full viewport height */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.template-panel {
+  width: 30%;
+  padding: 20px;
+  background-color: #f4f4f4;
+  border-right: 1px solid #ddd;
+  overflow-y: auto; /* Allow scrolling in the sidebar */
+}
+
+.template-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.template-card {
+  cursor: pointer;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  text-align: center;
+  background-color: #fff;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.template-card:hover {
+  background-color: #f0f8ff;
+  transform: scale(1.03);
+}
+
+.template-card.selected {
+  border: 2px solid #007bff;
+  background-color: #e7f3ff;
+}
+
+.resume-panel {
+  width: 70%;
+  padding: 20px;
+  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: 100vh; /* Restrict to viewport height */
+}
+
+.resume-panel h1 {
+  color: #555;
+  font-weight: 400;
+  text-align: center;
+}

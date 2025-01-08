@@ -3,28 +3,27 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import WelcomePage from "./components/WelcomePage";
 import Signup from "./components/Signup";
 import Signin from "./components/Signin";
-import TaskManager from "./components/TaskManager";
-import CVBuilder from "./components/CVBuilder";
 import Profile from "./components/Profile";
 //import Verify from "./components/verify";
 import MyCVs from "./components/MyCVs";
+import ForgotPassword from "./components/forgotpassword"; 
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
-  const [isVerified, setIsVerified] = useState(false);
+  // const [isVerified, setIsVerified] = useState(false);
 
   const handleSignin = () => {
     setIsAuthenticated(true);
     // Fetch user verification status from the server or local storage
-    const userVerified = localStorage.getItem("isVerified") === "true";
-    setIsVerified(userVerified);
+    // const userVerified = localStorage.getItem("isVerified") === "true";
+    // setIsVerified(userVerified);
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    setIsVerified(false);
+    // setIsVerified(false);
     localStorage.removeItem("token");
-    localStorage.removeItem("isVerified");
+    // localStorage.removeItem("isVerified");
   };
 
   return (
@@ -43,9 +42,7 @@ function App() {
           // Show TaskManager if authenticated
           <>
             <Route path="/profile" element={<Profile onLogout={handleLogout} />} />
-            <Route path="/cv-builder" element={<CVBuilder onLogout={handleLogout} />} />
-            <Route path="/cv-builder/:name" element={<CVBuilder onLogout={handleLogout} />} />
-            <Route path="/tasks" element={<TaskManager onLogout={handleLogout}/>} />
+            <Route path="/my-cvs" element={<MyCVs onLogout={handleLogout} />} />
             <Route path="*" element={<Navigate to="/profile" />} />
           </>
         )}
