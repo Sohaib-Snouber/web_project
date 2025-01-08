@@ -19,6 +19,7 @@ const dbChoice = 2; // Set to 1 for local MongoDB, 2 for cloud MongoDB Atlas
 
 // Use the appropriate MongoDB URI based on dbChoice
 const mongooseUri = dbChoice === 1
+
   ? "mongodb://localhost:27017/taskDB" // Local MongoDB URI
   : process.env.MONGO_URI;             // Cloud MongoDB URI from .env
 
@@ -59,7 +60,7 @@ const authenticate = (req, res, next) => {
 // Signup Route
 app.post("/signup", async (req, res) => {
   try {
-    const { email, password, dob } = req.body;  // dob: date of birth
+    const { email, password } = req.body;  
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
@@ -78,7 +79,6 @@ app.post("/signup", async (req, res) => {
     const newUser = new User({
       email,
       password: hashedPassword,
-      dob,
       authCode,
       authCodeExpires
     });
@@ -220,19 +220,20 @@ app.post("/signin", async (req, res) => {
 });
 
  // forgot password
-app.post("/forgotpassword", authenticate, async (req, res) => {
-  const { email, dob, newPassword } = req.body;
-
+app.post("/forgotpassword", async (req, res) => {
+  
   try {
-    // Find the user based on the user ID extracted from the token
-    const user = await User.findById(req.userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" }); // Return error if user does not exist
-    }
+    const { email, newPassword } = req.body;
 
-    // Verify the date of birth
-    if (user.dob !== dob) {
-      return res.status(400).json({ message: "Date of birth is incorrect" });
+    // Basic validation
+    if (!email || !newPassword) {
+      console.error("Missing required fields:", { email, newPassword });
+      return res.status(400).json({ message: "Email and new password are required." });
+    }
+    // Find the user based on the email of the user 
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({  message: "User with the provided email does not exist." }); // Return error if user does not exist
     }
 
     // Hash the new password and update it in the database
