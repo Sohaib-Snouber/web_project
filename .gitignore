@@ -1,5 +1,27 @@
+0# Environment Variables
 .env
+
+# Node Modules
 /task-manager-backend/node_modules/
 /task-manager-frontend/node_modules/
+
+# macOS System Files
 /task-manager-frontend/src/.DS_Store
-.env
+
+# IDE Directories
+.idea/
+.vscode/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build Output
+/task-manager-frontend/build/
+
+# Miscellaneous
+Thumbs.db
+
