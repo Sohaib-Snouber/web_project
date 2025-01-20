@@ -69,6 +69,9 @@ function Signin({ onSignin }) {
           <div className="link">
             <a href="/signup">Create one?</a>
           </div>
+          <div className="link">
+            <a href="/forgotpassword">Forgot password?</a>
+          </div>
           <button
             onClick={(e) => handleSignin(e)}
             className="btn btn-primary login-btn"

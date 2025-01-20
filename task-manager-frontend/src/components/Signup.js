@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import config from "../config";
 import Verify from "./Verify";
+import ResendEmail from "./resendemail";
 import "./Signup.css";
 
 function Signup() {
@@ -18,8 +19,10 @@ function Signup() {
         email,
         password,
       });
+      console.log(response.data); // Debugging response
       setMessage(response.data.message);
     } catch (error) {
+      console.error("Signup error:", error.response || error.message);
       setMessage(error.response.data.message || "Error signing up");
     }
   };
@@ -61,10 +64,13 @@ function Signup() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button onClick={(e) => handleSignup(e)} className="btn btn-primary Register-btn">Sign Up</button>
+          <button onClick={(e) => handleSignup(e)} className="btn btn-primary Register-btn">Sign up</button>
           <p>{message}</p>
           {message.includes("Check your email for the verification code") && (
+              <> 
             <Verify email={email} onVerified={handleVerified} />
+            <ResendEmail email={email}  />
+            </>
           )}
           {isVerified && <p>Email verified successfully. You can now sign in.</p>}
           <p>

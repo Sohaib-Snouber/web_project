@@ -19,12 +19,13 @@ const dbChoice = 2; // Set to 1 for local MongoDB, 2 for cloud MongoDB Atlas
 
 // Use the appropriate MongoDB URI based on dbChoice
 const mongooseUri = dbChoice === 1
+
   ? "mongodb://localhost:27017/taskDB" // Local MongoDB URI
   : process.env.MONGO_URI;             // Cloud MongoDB URI from .env
 
 // Connect to MongoDB "mongodb://localhost:27017/taskDB"
 mongoose.connect(mongooseUri, {
-
+ 
 }).then(() => {
   console.log("Connected to MongoDB Atlas");
 }).catch(err => {
@@ -59,7 +60,7 @@ const authenticate = (req, res, next) => {
 // Signup Route
 app.post("/signup", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body;  
 
     // Check if user exists
     const existingUser = await User.findOne({ email });
@@ -118,16 +119,71 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+// Resend Email Route
+app.post("/resendemail", async (req, res) => {
+  try {
+    const { email } = req.body;
 
+    // Find the user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email" });
+    }
+
+    // Generate a new authentication code
+    const authCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const authCodeExpires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
+
+    // Update the user with the new authentication code
+    user.authCode = authCode;
+    user.authCodeExpires = authCodeExpires;
+    await user.save();
+
+    // Sending email with AWS SES
+    const params = {
+      Source: process.env.SES_SOURCE_EMAIL, // Your verified SES email
+      Destination: {
+        ToAddresses: [email],
+      },
+      Message: {
+        Subject: { Data: "Email Verification Code" },
+        Body: {
+          Text: {
+            Data: `Your verification code is ${authCode}. It will expire in 30 minutes.`,
+          },
+        },
+      },
+    };
+
+    const command = new SendEmailCommand(params);
+    client.send(command)
+      .then((data) => console.log("Email sent successfully:", data))
+      .catch((error) => console.error("Error sending email:", error));
+
+    res.json({ message: "Verification email resent successfully." });
+  } catch (error) {
+    console.error("Error resending email:", error); // Log the error
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Verify Route
 app.post("/verify", async (req, res) => {
   try {
     const { email, authCode } = req.body;
 
+    console.log("Email received:", email); // Debugging
+    console.log("Auth code received:", authCode); // Debugging
+
     const user = await User.findOne({ email });
     if (!user) {
+      console.log("User not found for email:", email); // Debugging
       return res.status(400).json({ message: "Invalid email" });
+    }
+  // Check if the user is already verified
+    if (user.isVerified) {
+      console.log("User is already verified:", email);
+      return res.status(200).json({ message: "Account is already verified." });
     }
 
     if (user.authCode !== authCode || user.authCodeExpires < Date.now()) {
@@ -139,8 +195,9 @@ app.post("/verify", async (req, res) => {
     user.authCodeExpires = undefined;
     await user.save();
 
-    res.json({ message: "Email verified successfully" });
+    res.json({ message: "Account successfully verified." });
   } catch (error) {
+    console.error("Error during code verification:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -168,6 +225,60 @@ app.post("/signin", async (req, res) => {
   } catch (error) {
     console.log(error)
     res.status(500).json({ error: error.message });
+  }
+});
+
+ // forgot password
+app.post("/forgotpassword", async (req, res) => {
+  
+  try {
+    const { email, newPassword } = req.body;
+
+    // Basic validation
+    if (!email || !newPassword) {
+      console.error("Missing required fields:", { email, newPassword });
+      return res.status(400).json({ message: "Email and new password are required." });
+    }
+    // Find the user based on the email of the user 
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({  message: "User with the provided email does not exist." }); // Return error if user does not exist
+    }
+
+    // Hash the new password and update it in the database
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+
+     // Generate a new verification code
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    user.verificationCode = verificationCode; // Store the code in the database
+    user.verificationCodeExpires = Date.now() + 15 * 60 * 1000; // Code valid for 15 minutes
+    user.isVerified = false; // Reset verification status
+    await user.save(); // Save the updated password to the database
+
+
+    // Send the verification code to the user's email
+    const params = {
+      Source: process.env.SES_SOURCE_EMAIL,
+      Destination: { ToAddresses: [email] },
+      Message: {
+        Subject: { Data: "Password Reset Verification Code" },
+        Body: {
+          Text: {
+            Data: `Your verification code is: ${verificationCode}. This code will expire in 15 minutes.`,
+          },
+        },
+      },
+    };
+    const command = new SendEmailCommand(params);
+    client.send(command)
+      .then((data) => console.log("Email sent successfully:", data))
+      .catch((error) => console.error("Error sending email:", error));
+
+      res.json({ message: "Password updated successfully. A verification code has been sent to your email." });
+  } catch (error) {
+    console.error("Error during password reset:", error);
+    res.status(500).json({ message: "An error occurred while resetting the password." });
   }
 });
 
