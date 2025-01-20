@@ -1,5 +1,5 @@
 // src/config.js
-const isProduction = true; // Set to `true` for production, `false` for local development
+const isProduction = false; // Set to `true` for production, `false` for local development
 
 const config = {
   baseURL: isProduction

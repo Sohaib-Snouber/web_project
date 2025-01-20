@@ -9,7 +9,6 @@ import "./Signup.css";
 function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [dob, setDob] = useState(""); 
   const [message, setMessage] = useState("");
   const [isVerified, setIsVerified] = useState(false);
 
@@ -19,7 +18,6 @@ function Signup() {
       const response = await axios.post(`${config.baseURL}/signup`, {
         email,
         password,
-        dob: dob ? dob.toISOString().split("T")[0] : "", // Convert date to YYYY-MM-DD format
       });
       console.log(response.data); // Debugging response
       setMessage(response.data.message);

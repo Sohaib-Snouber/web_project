@@ -32,7 +32,7 @@ const ForgotPassword = () => {
         console.log("Response from API:", response.data); // Debugging
 
         setMessage(response.data.message);
-        navigate(`/verify-code?email=${encodeURIComponent(email)}`); // Redirect to the verification page
+        navigate(`/Verify?email=${encodeURIComponent(email)}`); // Redirect to the verification page
       } catch (error) {
         console.error("Error response from API:", error.response || error.message); // Debugging
         setMessage(error.response?.data?.message || "Something went wrong.");

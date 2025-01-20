@@ -79,7 +79,6 @@ app.post("/signup", async (req, res) => {
     const newUser = new User({
       email,
       password: hashedPassword,
-      dob,
       authCode,
       authCodeExpires
     });
@@ -173,9 +172,18 @@ app.post("/verify", async (req, res) => {
   try {
     const { email, authCode } = req.body;
 
+    console.log("Email received:", email); // Debugging
+    console.log("Auth code received:", authCode); // Debugging
+
     const user = await User.findOne({ email });
     if (!user) {
+      console.log("User not found for email:", email); // Debugging
       return res.status(400).json({ message: "Invalid email" });
+    }
+  // Check if the user is already verified
+    if (user.isVerified) {
+      console.log("User is already verified:", email);
+      return res.status(200).json({ message: "Account is already verified." });
     }
 
     if (user.authCode !== authCode || user.authCodeExpires < Date.now()) {
