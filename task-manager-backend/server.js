@@ -250,9 +250,9 @@ app.post("/forgotpassword", async (req, res) => {
     user.password = hashedPassword;
 
      // Generate a new verification code
-    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    user.verificationCode = verificationCode; // Store the code in the database
-    user.verificationCodeExpires = Date.now() + 15 * 60 * 1000; // Code valid for 15 minutes
+    const authCode = Math.floor(100000 + Math.random() * 900000).toString();
+    user.authCode = authCode; // Store the code in the database
+    user.authCodeExpires = Date.now() + 15 * 60 * 1000; // Code valid for 15 minutes
     user.isVerified = false; // Reset verification status
     await user.save(); // Save the updated password to the database
 
@@ -265,7 +265,7 @@ app.post("/forgotpassword", async (req, res) => {
         Subject: { Data: "Password Reset Verification Code" },
         Body: {
           Text: {
-            Data: `Your verification code is: ${verificationCode}. This code will expire in 15 minutes.`,
+            Data: `Your verification code is: ${authCode}. This code will expire in 15 minutes.`,
           },
         },
       },
@@ -290,11 +290,6 @@ app.get("/profile", authenticate, async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-});
-
-
-app.listen(5001, () => {
-  console.log("Server is running on port 5001");
 });
 
 app.get("/resumes", authenticate, async (req, res) => {
@@ -379,4 +374,8 @@ app.delete("/resumes/:name", authenticate, async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+app.listen(5001, () => {
+  console.log("Server is running on port 5001");
 });

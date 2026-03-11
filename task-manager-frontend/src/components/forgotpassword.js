@@ -24,8 +24,7 @@ const ForgotPassword = () => {
 
     try {
         console.log("Sending request to forgotpassword API:", { email, newPassword });
-        const response = await axios.post("http://localhost:5001/forgotpassword", {
-        // const response = await axios.post(`${config.baseURL}/forgotpassword`, {
+        const response = await axios.post(`${config.baseURL}/forgotpassword`, {
           email,
           newPassword,
         });
